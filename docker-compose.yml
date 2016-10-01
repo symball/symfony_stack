@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+
+  data_container:
+    #image: symball/data_container
+    image: symball/data_container
+    stdin_open: true
+    tty: true
+    links:
+      - mongo
+    volumes:
+      - ./site:/var/www/html
+
+  nginx:
+    build: docker/nginx
+    ports:
+      - 8086:80
+    volumes_from:
+     - data_container
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - fpm
+
+  fpm:
+    image: symball/php
+    links:
+      - mongo
+    volumes_from:
+     - data_container
+    
+  mongo:
+    image: mongo
+    volumes:
+      - ./docker/data/mongo:/var/lib/mongo

@@ -1,0 +1,15 @@
+/site/app/config/parameters.yml
+/site/phpunit.xml
+/site/var/*
+!/var/cache
+/site/var/cache/*
+!var/cache/.gitkeep
+!/var/logs
+/site/var/logs/*
+!var/logs/.gitkeep
+!/var/sessions
+/site/var/sessions/*
+!var/sessions/.gitkeep
+!var/SymfonyRequirements.php
+/site/vendor/
+/site/web/bundles/

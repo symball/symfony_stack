@@ -1,0 +1,4 @@
+/**
+ * @MongoDB\ReferenceMany(targetDocument="Post")
+ */
+protected $comments;

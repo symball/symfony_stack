@@ -1,0 +1,28 @@
+<?php
+
+namespace AppBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+/**
+ * @MongoDB\Document
+ */
+class Post
+{
+  /**
+   * @MongoDB\Id
+  */
+  protected $id;
+  /**
+  * @MongoDB\Field(type="string")
+  */
+  protected $title;
+  /**
+  * @MongoDB\Field(type="string")
+  */
+  protected $summary;
+  /**
+  * @MongoDB\Field(type="string")
+  */
+  protected $content;
+
+}

@@ -1,0 +1,11 @@
+doctrine_mongodb:
+    connections:
+        default:
+            server: "%database_host%"
+            username: "%database_user%"
+            password: "%database_password%"
+            options: {}
+    default_database: test_database
+    document_managers:
+        default:
+            auto_mapping: true

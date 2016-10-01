@@ -1,0 +1,18 @@
+/**
+ * @Route("/post", name="post")
+ */
+public function postAction(Request $request)
+{
+
+  $post = new Post();
+  $post->setTitle('First Post!');
+  $post->setSummary('I don\'t want to set the world on fire');
+  $post->setContent('<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>');
+
+  $dm = $this->get('doctrine_mongodb')->getManager();
+  $dm->persist($post);
+  $dm->flush();
+
+  echo 'created';
+  die();
+}
