@@ -6,22 +6,23 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class DefaultController extends Controller
+class PostController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/post/{id}", name="post")
      */
-    public function indexAction(Request $request)
+    public function indexAction($id)
     {
-      $posts = $this->get('doctrine_mongodb')
+      $post = $this->get('doctrine_mongodb')
         ->getManager()
         ->createQueryBuilder('AppBundle:Post')
+        ->field('id')->equals($id)
         ->getQuery()
-        ->execute();
+        ->getSingleResult();
 
 
-        return $this->render('default/index.html.twig', array(
-            'posts' => $posts
+        return $this->render('post/singular.html.twig', array(
+            'post' => $post
         ));
     }
 }

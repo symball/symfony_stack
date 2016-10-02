@@ -2,3 +2,15 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
 #    parameter_name: value
+services:
+
+    sonata.admin.post:
+        class: AppBundle\Admin\PostAdmin
+        tags:
+            - { name: sonata.admin, manager_type: doctrine_mongodb, group: "Blog Management", label: "Posts"}
+        arguments:
+            - ~
+            - AppBundle\Document\Post
+            - ~
+        calls:
+            - [ setTranslationDomain, [AppBundle]]
