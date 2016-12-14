@@ -1,0 +1,10 @@
+{# app/Resources/views/base.html.twig #}
+
+{# Check if value exists #}
+{% if app.session.flashBag.peek("alert") is not empty %}
+  <div class="row medium-8 large-7 columns">
+    {% for msg in app.session.flashBag.get("alerts") %}
+    <div class="alert" role="alert">{{ msg }}</div>
+    {% endfor %}
+  </div>
+{% endif %}

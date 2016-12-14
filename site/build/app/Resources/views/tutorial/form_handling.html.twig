@@ -16,12 +16,30 @@
 
   <section id="creating-a-form">
     <h2>Creating a Form</h2>
-    <p>In an earlier lesson, when we created the comment entity we also created the backend for our form. The Symfony Form Builder takes a data object and uses it as a template for inputted data; this also means it is very simple to pre-populate forms whilst still at the data level.</p>
+    <p>In an earlier lesson, when we created the comment entity we also created the backend for our form. The Symfony Form Builder takes a data object and uses it as a template for inputted data.</p>
 
-    {{ file('adding-persistent-data','Comment.php','php')|raw }}
+    {{ file(page_key,'BlogController-form-define.php')|raw }}
 
+    <p>With the form passed to the template, Twig has helpers to control rendering of a complete form in one line down to control of labels, input fields and feedback.</p>
 
+    {{ geshi_highlight('{{ form(contact_form) }}')|raw }}
 
+    <p>With the form ready to submit, we need to add code to the controller.</p>
+
+    {{ file(page_key,'BlogController-form-submit.php','BlogController.php')|raw }}
+
+  </section>
+
+  <section id="the-symfony-flashbag">
+    <h2>The Symfony FlashBag</h2>
+    <p>Symfony has a useful feature for temporarily storing key/value data called the <a href="https://symfony.com/doc/current/components/http_foundation/sessions.html">FlashBag</a>, maintaining their state until accessed and then unsetting.</p>
+    <p>It can be accessed through either the Session or Request object; if using a form the Request object is already present so there is no need to include any more code.</p>
+
+    <p>There is a <a href="http://api.symfony.com/3.2/Symfony/Component/HttpFoundation/Session/Flash/FlashBagInterface.html#method_peek">peek method</a> which allows you to check for whether the value exists without access though.</p>
+
+    {{ file(page_key,'twig-notification.html.twig','base.html.twig')|raw }}
+
+  </sections>
 
 </div>
 {% endblock %}
