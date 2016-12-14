@@ -1,5 +1,0 @@
-$posts = $this->get('doctrine_mongodb')
-  ->getManager()
-  ->createQueryBuilder('AppBundle:Post')
-  ->getQuery()
-  ->execute();

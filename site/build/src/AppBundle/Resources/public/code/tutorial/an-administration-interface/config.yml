@@ -1,0 +1,21 @@
+# app/config/config.yml
+
+# Hooking Sonata Admin in to the Block bundle
+sonata_block:
+   default_contexts: [cms]
+   blocks:
+       # enable the SonataAdminBundle block
+       sonata.admin.block.admin_list:
+           contexts: [admin]
+
+%app/config/routing.yml
+# Default routes for Sonata Admin
+admin_area:
+   resource: "@SonataAdminBundle/Resources/config/routing/sonata_admin.xml"
+   prefix: /admin
+
+# Allow generation of routes for our admins. The important part here is the type.
+_sonata_admin:
+   resource: .
+   type: sonata_admin
+   prefix: /admin

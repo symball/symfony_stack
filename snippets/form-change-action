@@ -1,3 +1,0 @@
-
-$form = $this->createForm(CommentType::class, $comment,
-  array('action' => $this->generateUrl('comment')));

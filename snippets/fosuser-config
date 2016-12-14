@@ -1,8 +1,0 @@
-# USER SYSTEM
-fos_user:
-    db_driver: mongodb
-    firewall_name: main
-    user_class: AppBundle\Document\User
-
-framework:
-    translator: ~

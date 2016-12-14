@@ -1,3 +1,0 @@
-sonata_admin:
-    templates:
-        layout:  AppBundle::standard_layout.html.twig

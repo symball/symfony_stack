@@ -1,0 +1,328 @@
+{% extends 'common.html.twig' %}
+
+{% block body %}
+
+<div class="row medium-8 large-7 columns">
+  <section id="introduction" class="callout">
+    <p>By the end of this tutorial, your device will be serving a Symfony project using Apache. Along the way, we’ll be:</p>
+    <ul>
+      <li>Setting up an editor to easily manage our code</li>
+      <li>Installing the application stack that Symfony will run on</li>
+      <li>Installing a dedicated Symfony Installer</li>
+      <li>Creating a Symfony project and configuring Apache to host it</li>
+    </ul>
+  </section>
+  <section id="editing-our-code">
+    <h2>Editing our Code</h2>
+    <p>We want to have a powerful way to manage our code because the default environment (Ubuntu) lacks one. For these tutorials, I have chosen Atom because it’s lightweight and incredibly extendable thanks to the plugin interface. More information about Atom can be found on the <a href="https://atom.io">official site</a></p>
+    <p>There is a PPA available (thanks to webupd8team) which allows us to install and manage Atom like any other Linux package so, add that first. PPA stands for Personal Package Archive and they are used to install software (or versions of software) which are not available in the official Ubuntu repositories.</p>
+    {{ geshi_highlight('sudo add-apt-repository ppa:webupd8team/atom\rsudo apt-get update\rsudo apt-get install atom', 'bash')|raw }}
+  </section>
+
+  <section id="the-application-stack">
+    <h2>The Application Stack</h2>
+    <p>When complete, we'll be running the project on a full Linux Apache MariaDB PHP (LAMP) stack but database setup will be covered in lesson 2. For now, let’s install our initial application stack:</p>
+    {{ geshi_highlight('sudo apt-get install apache2 php php-intl php-mcrypt php-opcache php-xml libapache2-mod-php composer', 'bash')|raw }}
+    <p>You may notice that in this command, as well as installing PHP, we’re also installing some PHP modules. A full list of Symfony requirements can be found on the <a href="http://symfony.com/doc/current/reference/requirements.html">Requirements for Running Symfony</a> page.</p>
+    <p>For certain functionality, there are a series of polyfills that get downloaded with Symfony and also a requirements checker which we’ll come across later.</p>
+    <h3>Configuration</h3>
+    <p>With the necessary packages installed, let’s configure PHP. First we enable one of the downloaded PHP extensions which isn’t switched on by default</p>
+    {{ geshi_highlight('sudo phpenmod opcache', 'bash')|raw }}
+    <p>The second is to set the default timezone which involves editing the PHP config files for both the Apache module and the command line interface. Search for date.timezone, uncomment the declaration by removing the semi-colon and replace the value with the Area/City seperated by a slash; reference can be found on the PHP website.</p>
+    {{ geshi_highlight('# /etc/php/7.0/cli/php.ini\r# /etc/php/7.0/apache2/php.ini\r\r;http://php.net/manual/en/timezones.php\rdate.timezone = Asia/Hong_Kong','ini')|raw }}
+  </section>
+
+  <section>User Permissions</section>
+    <h2>User Permissions</h2>
+    <p>With the system packages installed, we’ll next want to make sure our user has permissions to edit the files within the web space later on. Apache runs as www-data so, the simplest solution will be to add our user to the www-data group.</p>
+    {{ geshi_highlight('sudo usermod -aG www-data user_name','bash')|raw}}
+    <p>Don’t forget that we’ll need to log out and back in again for these changes to take effect. After logging back in, let’s change the ownership and permissions on the web server directory away from the default root. If we were to now run id, we’d see that our user is now in the www-data group.</p>
+    {{ geshi_highlight('id', 'bash')|raw }}
+  </section>
+
+  <section id="symfony-dedicated-installer">
+    <h2>Symfony Dedicated Installer</h2>
+    <p>At this point, we have everything we need to install and run Symfony as it can be installed through Composer but a dedicated Symfony installer is the <a href="https://symfony.com/download">officially recommended option</a>. It makes project creation quicker by configureing some default settings for us and some extra template code that will make things simpler later on.</p>
+    {{ geshi_highlight('sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony\rsudo chmod a+x /usr/local/bin/symfony\rsymfony','bash')|raw }}
+    <p>Running the symfony wrapper without any flags presents you with helpful information illustrating the various ways to create a project. We will be using the default settings which results in the latest release.</p>
+    <h3>Creating the Project</h3>
+    <p>At the time of this tutorial, Symfony 3.2 is being used. For new projects, this is recommended over the Long Term Support (LTS) because a new candidate for LTS will be released in 2017 and the coding style will be much closer to it compared to the current 2.8 LTS version of Symfony</p>
+    {{ geshi_highlight('symfony new mytestproject\rcd mytestproject','bash')|raw }}
+  </section>
+
+  <section id="running-the-project">
+    <h2>Running the project</h2>
+    <p>Let’s check whether everything installed correctly using the requirements checker supplied with Symfony</p>
+    {{ geshi_highlight('php bin/symfony_requirements','bash')|raw}}
+    <p>In the case of Ubuntu, we are ready to run Symfony but, there are a couple of warnings. The international extension that ships with Ubuntu is out of date and no PDO module can be found. With neither of these considered a problem, let’s use the built in PHP server in conjunction with the Symfony CLI to check the project actually runs.</p>
+    {{ geshi_highlight('php bin/console server:run','bash')|raw }}
+    <p>With the green light given, open the browser and visit the given URL. You should be greeted by a welcome message telling us what version of Symfony is running and where the project is located.</p>
+    <h3>Using Apache</h3>
+    <p>So far, we’ve done everything from our home directory and you might be thinking to just drop the project we created in to the web server root, which with Ubuntu is</p>
+    {{ geshi_highlight('sudo mv myproject/* /var/www/html','bash')|raw }}
+    <p>If we check what files are in the project directory, you’ll note that there isn’t an index file or even files that we recognise as runnable. For Symfony, the public root is represented by the web directory  Normally, you’d expect an index.php or index.html; here the index file is app.php. Because is non-standard, let’s go and modify our Apache configuration to reflect these changes.</p>
+    {{ geshi_highlight('# /etc/apache2/sites-available/000-default.conf\r\rDocumentRoot /var/www/html/web\rDirectoryIndex app.php','ini')|raw }}
+    <p>We need to reload the Apache configuration</p>
+    {{ geshi_highlight('sudo apachectl restart','bash')|raw }}
+    <p>If we visit our browser and reload the page, we’re greeted with an error page. The reason is Symfony <a href="http://symfony.com/doc/current/setup/file_permissions.html">requires the project location to be writable</a> by both the web server and PHP command line user (www-data).</p>
+    {{ geshi_highlight('sudo chown -R www-data:www-data /var/www/html\rsudo chmod -R 775 /var/www/html','bash')|raw }}
+    <p>Now, go back to your browser and reload the page, if you are greeted with the Symfony welcome message, congratulations, you have successfully setup Symfony and are ready to move on to the <a href="#">second tutorial</a></p>
+  </section>
+
+</div>
+
+<div class="row medium-8 large-7 columns">
+  <section id="introduction" class="callout">
+    <p>By the end of this lesson, you’ll have a nice looking portfolio page with the makings of a blog index you created. Along the way, we’ll be:</p>
+    <ul>
+      <li>Discussing Symfony Project layout</li>
+      <li>Understand navigation with the Symfony controller</li>
+      <li>Creating pages with the Twig templating language</li>
+      <li>Learning how to use the different Symfony environments</li>
+      <li>Creating a full template for our frontend</li>
+    </ul>
+  </section>
+
+  <section id="project-layout">
+    <h2>Project Layout</h2>
+    <p>To get started, open up Atom and from the file drop down menu, click add project and use our web root as the destination. Taking a look at the file layout</p>
+
+    <table>
+      <tr>
+        <td>app</td>
+        <td>Configuration, templating, translations</td>
+      </tr>
+      <tr>
+        <td>bin</td>
+        <td>Some ready made binary utilities</td>
+      </tr>
+      <tr>
+        <td>src</td>
+        <td>Where we place any PHP code we create</td>
+      </tr>
+      <tr>
+        <td>tests</td>
+        <td>PHPUnit automatic testing schema</td>
+      </tr>
+      <tr>
+        <td>var</td>
+        <td>Auto generated code</td>
+      </tr>
+      <tr>
+        <td>vendor</td>
+        <td>Where any third party code downloaded by composer goes, including Symfony itself</td>
+      </tr>
+      <tr>
+        <td>web</td>
+        <td>The publicly accessable root of the project</td>
+      </tr>
+      <tr>
+        <td>composer.json</td>
+        <td>Schema for third party dependencies</td>
+      </tr>
+      <tr>
+        <td>composer.lock</td>
+        <td>The “current version” schema for use when running composer install</td>
+      </tr>
+      <tr>
+        <td>phpunit.xml.dist</td>
+        <td>A base configuration file to run with PHPUnit</td>
+      </tr>
+      <tr>
+        <td>README.md</td>
+        <td>A markdown file used to describe the project</td>
+      </tr>
+    </table>
+  </section>
+
+  <section id="the-symfony-controller">
+    <h2>The Symfony Controller</h2>
+    <p>Open the following file from your project</p>
+    {{ geshi_highlight('# src/AppBundle/Controller/DefaultController.php', 'bash')|raw }}
+    <p>The first thing you should see is a namespace declaration that follows the file path. There will be a namespace declaration present in every PHP file throughout Symfony for the sake of autoloading according to the <a href="http://www.php-fig.org/psr/psr-4/">PSR4 standard</a>.
+    <div class="callout secondary"><p>If you don’t understand namespaces, they encapsulate code avoiding conflict in the same way you have houses at different addresses contain similar things; each is a private container.</p></div>
+    <p>Using namespaces to pull in functionality from other locations in Symfony, there are three use statements. These are the features from some of the bundles Standard Edition configure for us. We’ll cover bundles in greater depth later on but for now, know that a bundle is simply the term used to describe a collection of code that conforms to Symfony standards.</p>
+    <ul>
+      <li>Route allows us to define navigation.</li>
+      <li>Controller provides the request / reponse logic</li>
+      <li>Request creates a bag of information about the HTTP request</li>
+    </ul>
+    <p>There are three other things to take note of (and not forget) in this file</p>
+    <ol>
+      <li>The <a href="http://symfony.com/doc/current/contributing/code/standards.html">coding conventions</a> used to name classes and methods. Symfony is not just a framework, it is a philosophy and community so there is a mindset to follow that. If you intend to distribute your code, you need to conform to a set of standards. When getting started, copy existing boilerplate code and then modify until familliar</li>
+      <li>Above our method name, there is a comment with an @Route annotation within it. Symfony builds and caches the code we create; annotations provide us with a way to bolt on extras with the goal of keeping code clean. The Route annotation provides a flexible and simple way to define navigation. Other examples can include validation and even database schemas.</li>
+      <li>The return render line. When using a Symfony controller, every action must return a response object.</li>
+    </ol>
+  </section>
+
+  <section id="templates">
+    <h2>Templates</h2>
+    <p>The Default controller returns a rendered template which has been passed the path of your Symfony project using base_dir as a variable. The default template engine is <a href="http://twig.sensiolabs.org/">Twig, also created by SensioLabs</a> like the core of Smyfony itself.</p>
+    <p>If you take a look at the documentation, you can see the syntax is very short and simple. This keep it simple approach was a design decision made on purpose.</p>
+    <p>Open up the following two files</p>
+    {{ geshi_highlight('# app/Resources/views/default/index.html.twig\r# app/Resources/views/base.html.twig', 'bash')|raw}}
+    <p>Looking at the templates</p>
+    <ul>
+      <li>The page is constructed from a root template (base) using regular HTML which can be extended in the same way that PHP classes can inherit parent object proprties.{{ geshi_highlight('{% extends ... %}')|raw }}</li>
+      <li>There are block declarations which allow for easy overriding of content in child templates.{{ geshi_highlight('{% block ... %}{% endblock %}')|raw }}</li>
+    </ul>
+    <p>Change something in this file and reload the page. Nothing changed because Symfony is using the production cache and frontend views are no exception. In order to have the changes reflected, we need to clear the cache.</p>
+    {{ geshi_highlight('php bin/console cache:clear --env=prod','bash')|raw }}
+    <p>Reload the page and you should see your changes. This is impractical for development though. In Symfony, we can run the website using various environments, you may notice in the above that we cleared the production using the env parameter.</p>
+  </section>
+
+  <section id="environments">
+    <h2>Environments</h2>
+    <p>To Symfony, an environment is really nothing more than a key which gets set early in the pipeline. In reality, this key is used to provide different code paths and the Standard Edition prepares three environments for us right from the get go.</p>
+    <table>
+      <tr>
+        <td>Production</td>
+        <td>The optimised pipeline</td>
+      </tr>
+      <tr>
+        <td>Development</td>
+        <td>Caches are regenerated every request, debugging enabled</td>
+      </tr>
+      <tr>
+        <td>Testing</td>
+        <td>Used for PHPUnit testing</td>
+      </tr>
+    </table>
+    <p>Smyfony Standard Edition prepares two directory indexes for you to use. You may recall in the first tutorial, we set the Apache DirectoryIndex to app.php. Open the following files</p>
+    {{ geshi_highlight('# web/app.php\r# web/app_dev.php','bash')|raw }}
+    <p>For now, don't concern yourself with the specifics of each file, just take note that when the kernel is created there is a different first parameter used in each file.</p>
+    {{ geshi_highlight('$kernel = new AppKernel(‘dev’, true);','php')|raw}}
+    <p>Go back to your browser and visit 127.0.0.1/app_dev.php. You should be viewing a very similar page to the original except there is a toolbar located along the bottom of the page providing extra information. Symfony has very powerful debugging tools built right in to the framework itself.</p>
+    <p>Make a change to your template, save and reload. The changes are instantaneous with no need to clear any caches. Try taking the app_dev.php part out of the URL and reload the page, your changes have no effect yet as they are still using the cache.
+  </section>
+
+  <section id="creating-our-frontend">
+    <h2>Creating our frontend</h2>
+    <p>The project we're building is that of a digital agent and to quickstart things, we’ll use a premade template. Go and grab the template from <a href="https://startbootstrap.com/template-overviews/freelancer/">here</a></p>
+    <p>Upon downloading (or cloning) the template, we want to make parts of it public. Symfony does provide facilities to manage web assets including features for combining and minifying web assets which will be covered in the optimisation tutorial but for now, we’ll copy the appropriate assets to the web root.</p>
+    <p>Copy the following folders from the downloaded template to the web directory</p>
+    {{ geshi_highlight('css\rimg\rjs\rvendor','bash')|raw }}
+    <p>With that done, we want to change the template. Open the index.html from the download and copy the contents in to your base.html.twig template and add a slash at the start of each address for the web assets.</p>
+    <ul class="accordion" data-accordion data-allow-all-closed="true">
+      <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Click here to view the result</a>
+        <div class="accordion-content" data-tab-content>
+{{geshi_highlight('full-template.html','html')|raw }}
+
+</div>
+      </li>
+    </ul>
+    <p>Reload 127.0.0.1/app_dev.php and your site will now reflect a Freelancer portfolio. Before creating a second page, we’re going to make the frontend code more managable and the Twig "extends" declaration makes this very simple.When done, there will be three parts to your Symfony template</p>
+    <table>
+      <tr>
+        <td>base.html.twig</td>
+        <td>The root of the template featuring HTML that will be present on every page; the template skeleton. The benefit of laying out the template in this fashion is that it provides a quick to view high level representation of the site layout without needing to concern yourself with the details.</td>
+      </tr>
+      <tr>
+        <td>common.html.twig</td>
+        <td>Some default content to be used in block positions. Having the common elements in a clearly defined template makes it very quick to change common elements and reduces the chance of breaking the overall layout.</td>
+      </tr>
+      <tr>
+        <td>index.html.twig</td>
+        <td>Represents content unique to the page</td>
+      </tr>
+    </table>
+    <p>The base template is precisely that, basic. The blocks we declare will be very generic. If you were to cut up the template in to managable sections, without going too deep, we will define:</p>
+    <ul>
+      <li>Navigation so that visitors can...navigate the site</li>
+      <li>A header area to include striking content</li>
+      <li>The body area which will contain page specific content</li>
+      <li>A common footer area with sitemap / contact form</li>
+    </ul>
+    <ul class="accordion" data-accordion data-allow-all-closed="true">
+      <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Click here to view the result</a>
+        <div class="accordion-content" data-tab-content>
+        {{ geshi_highlight('base.html.twig','html')|raw}}
+        </div>
+      </li>
+    </ul>
+    <p>With the skeleton in place, copy the HTML that was originally in place of our blocks to the common template</p>
+    <ul class="accordion" data-accordion data-allow-all-closed="true">
+      <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Click here to view the result</a>
+        <div class="accordion-content" data-tab-content>
+  {{ geshi_highlight('common.html.twig', 'html')|raw
+  }}
+        </div>
+      </li>
+    </ul>
+
+    <p>At this point, you have a template which allows for quick creation of new pages with only the need to extend the common template and define the body template. Let's finish it by creating the home page template. Please note that in the demo code below, I cut down the number of modals from 6 to 1 (replacing the links along the way) to keep the code shorter.</p>
+
+    <ul class="accordion" data-accordion data-allow-all-closed="true">
+      <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Click here to view the result</a>
+        <div class="accordion-content" data-tab-content>
+        {{ geshi_highlight('', 'html')|raw }}
+        </div>
+      </li>
+    </ul>
+    <p>Reload the web page to check that everything has worked, it should look the same.</p>
+</section>
+
+<section id="creating-a-second-page">
+  <h2>Creating a second page</h2>
+  <p>The template work you performed in the last step was all about preperation and you will see that payoff now. You're going to be adding a blog section to the website.</p>
+  <p>We'll begin by creating a route to make the page we're about to create reachable. It is possible to add the route to the default controller but, because the blog will be a distinct part of the site, we should reflect that. The simplest way to do this is to open the Default controller and save it under a different name and then making the following three changes:</p>
+  <ul>
+    <li>The class name becomes BlogController</li>
+    <li>The @Route annotation defines the new blog route</li>
+    <li>The template returned to cover the new template</li>
+  </ul>
+  <ul class="accordion" data-accordion data-allow-all-closed="true">
+    <li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">Click here to view the result</a>
+      <div class="accordion-content" data-tab-content>
+      {{ geshi_highlight('
+    ','php')|raw }}
+      </div>
+    </li>
+  </ul>
+
+
+  Change the template from default to blog and remove the parameters part
+
+- Create a frontend view file
+Save the index.html.twig file under a different name. Because organisation of code is very important, rather than save it in the same place as the default view, let’s create another folder in views called blog and save it there.
+I will leave the name as index because it is going to act as the directory index for the blog part of our website and by being named index, we’ll be able to recognise it very quickly.
+
+To speed up development again, I’ll take some boilerplate code readymade for us:
+
+%https://startbootstrap.com/template-overviews/blog-home/
+
+Let’s view the source of the HTML file and simply copy the relevant code for a blog post in to our body for the moment. After saving the file, visit the page we just created:
+
+%127.0.0.1/app_dev.php/blog
+
+You should now see a new page but, we still have a large header across the page; this is due to the way we have defined our template structure. In common, there is a block called header. Let’s copy that block in to our blog index page and make a few minor modifications.
+
+Now we have our blog index page, we need some way to reach it from the frontend. Look at the route annotation within the blog controller we created.
+
+::@Route("/blog", name="blogindex")::
+
+Our new page has the name blogindex; this is our route name which allows us to reference the URL without needing to know the actual URL. To use this URL, let’s open common.html.twig and add an entry to the navigation section.
+
+{{geshi_highlight('{{ path(\'blogindex\') }}', 'html')|raw }}
+
+path is a twig function that will print the path for the route name that gets passed in as the first parameter and parameters as the second parameter as a JSON object. We’ll be using parameters in a later tutorial.
+
+NOTE
+So far in twig, we’ve used the { % (tag) syntax whereas now we are using { { (function) syntax. Some of the Twig functionality is interchangable but best practise states:
+- { { } } is used to print the result of an expression evaluation;
+- { % % } is used to execute statements.
+
+If you now reload the page, a new item will have been added to the navigation bar.
+
+EXPERIMENT
+- Try changing the URL we declared in our BlogController and see how the URL gets updated automatically for us. If you are already on the blog page when making this change, Symfony should throw an error as the route no longer exists
+- Get a list of all routes that Symfony recognises
+:: php bin/console debug:router
+</div>
+
+{% endblock %}

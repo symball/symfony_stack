@@ -1,0 +1,178 @@
+.vertical-center {
+	position: relative;
+}
+.vertical-center > * {
+	position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.center {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width:100%;
+	float: none !important;
+}
+
+.text-smaller,
+.text-smaller p {
+	font-size: 0.8rem !important;
+}
+.bigger > * {
+	font-size: 2em !important;
+	padding: 1em !important;
+	margin: 1em !important;
+}
+.hidden{
+	display: none;
+}
+.show{
+	display: block;
+}
+.pos-bottom {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+/* Create a bit of push underneath the next recurring items. Common Vert Listing */
+.push-bottom > * {
+	margin-bottom: 1rem;
+}
+
+/* Truncate text in the browser based on medium size definition */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* VERTICAL HEIGHT DEFINITIONS */
+.height-100
+{
+	height: 100vh;
+}
+
+/* If a section is part of a row, create some horizontal padding for the sake of the border effect */
+@media only screen and (min-width: 40.063em) {
+    .medium-1.truncate {
+    width: 8.33333%;
+    }
+
+  .medium-2.truncate {
+    width: 16.66667%;
+    }
+
+  .medium-3.truncate {
+    width: 25%;
+   }
+
+  .medium-4.truncate {
+    width: 33.33333%;
+    }
+
+  .medium-5.truncate {
+    width: 41.66667%;
+    }
+
+  .medium-6.truncate {
+    width: 50%;
+     }
+
+  .medium-7.truncate {
+    width: 58.33333%;
+     }
+
+  .medium-8.truncate {
+    width: 66.66667%; }
+
+  .medium-9.truncate {
+    width: 75%; }
+
+  .medium-10.truncate {
+    width: 83.33333%; }
+
+  .medium-11.truncate {
+    width: 91.66667%; }
+
+  .medium-12.truncate {
+    width: 100%; }
+
+}
+
+/* If a section is part of a row, create some horizontal padding for the sake of the border effect */
+@media only screen and (min-width: 40.063em) {
+    .medium-1.truncate {
+    width: calc(8.33333% - 1.5rem);
+    padding-right: 1.5rem;
+    }
+
+  .medium-2.in-row-section {
+    width: calc(16.66667% - 1.5rem);
+    padding-right: 1.5rem;
+    }
+
+  .medium-3.in-row-section {
+    width: calc(25% - 1.5rem);
+    padding-right: 1.5rem;
+   }
+
+  .medium-4.in-row-section {
+    width: calc(33.33333% - 1.5rem);
+    padding-right: 1.5rem;
+    }
+
+  .medium-5.in-row-section {
+    width: calc(41.66667% - 1.5rem);
+    padding-right: 1.5rem;
+    }
+
+  .medium-6.in-row-section {
+    width: calc(50% - 1.5rem);
+    padding-right: 1.5rem;
+     }
+
+  .medium-7.in-row-section {
+    width: calc(58.33333% - 1.5rem);
+    padding-right: 1.5rem;
+     }
+
+  .medium-8.in-row-section {
+    width: calc(66.66667% - 1.5rem);
+    padding-right: 1.5rem; }
+
+  .medium-9.in-row-section {
+    width: calc(75% - 1.5rem);
+    padding-right: 1.5rem; }
+
+  .medium-10.in-row-section {
+    width: calc(83.33333% - 1.5rem);
+    padding-right: 1.5rem; }
+
+  .medium-11.in-row-section {
+    width: calc(91.66667% - 1.5rem);
+    padding-right: 1.5rem; }
+
+  .medium-12.in-row-section {
+    width: calc(100% - 1.5rem);
+    padding-right: 1.5rem; }
+
+}
+/* Only use this at the bottom of multiple listings where equalizer is used to balance things out */
+.equalizer-two-balance {
+	margin-bottom: 0 !important;
+	height: 50% !important;
+}
+/* Allow the alphabet to be presented horizontally */
+li.alphabet-line {
+	width: 3.846153846153846%;
+	margin: 0;
+	padding:0;
+}
+li.alphabet-line .button {
+	padding: 0.1rem;
+}
+/* Add extra space and a border to the right of a list item */
+ul.pipe-seperated li {
+	padding-right: 1.375rem;
+	border-right: 1px solid #282828;
+}

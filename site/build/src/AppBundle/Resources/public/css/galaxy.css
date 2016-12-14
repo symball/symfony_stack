@@ -1,0 +1,58 @@
+#galaxy-banner {
+  height: 40vh;
+  overflow: hidden;
+  width: 100%;
+  background: rgba(0, 0, 0, 0) url("../img/bg-galaxy.jpg") no-repeat scroll 50% 50%;
+  transition: background 0.8s ease-out 0s;
+  width: 100%;
+  position: relative;
+  color: #ffffff;
+}
+#galaxy-banner .vertical-center {
+  height: 40vh;
+}
+#galaxy-banner [class^="stars"] {
+  position: absolute;
+  height: 200%;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+}
+
+#galaxy-banner .stars-1 {
+    animation: 440s linear 0s normal none infinite running orbit-clock-wise;
+    background: rgba(0, 0, 0, 0) url("../img/stars-1.png") repeat scroll 0 0;
+}
+#galaxy-banner .stars-2 {
+    animation: 360s linear 0s normal none infinite running orbit-counter-clock-wise;
+    background: rgba(0, 0, 0, 0) url("../img/stars-2.png") repeat scroll 0 0;
+}
+
+@keyframes orbit-clock-wise {
+0% {
+    opacity: 0.4;
+    transform: rotate(0deg);
+}
+2% {
+    opacity: 0.8;
+}
+4% {
+    opacity: 0.2;
+}
+5% {
+    opacity: 0.8;
+}
+100% {
+    opacity: 0.4;
+    transform: rotate(360deg);
+}
+}
+
+@keyframes orbit-counter-clock-wise {
+0% {
+    transform: rotate(360deg);
+}
+100% {
+    transform: rotate(0deg);
+}
+}

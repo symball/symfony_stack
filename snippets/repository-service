@@ -1,4 +1,0 @@
-repository.post:
-     class: AppBundle\Repository\PostRepository
-     factory: ["@doctrine.odm.mongodb.document_manager", getRepository]
-     arguments: [ 'AppBundle:Post' ]

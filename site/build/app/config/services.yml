@@ -1,0 +1,18 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+  tutorial:
+    class: AppBundle\Service\Tutorial
+    arguments: ["@dt_geshi.highlighter", "@templating", '%asset_path%']
+
+  twig.extension.file:
+      class: AppBundle\Twig\FileExtension
+      arguments: ["@dt_geshi.highlighter", '%asset_path%']
+      tags:
+          - { name: twig.extension }
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]

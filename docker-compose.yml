@@ -3,19 +3,19 @@ version: '2'
 services:
 
   data_container:
-    #image: symball/data_container
     image: symball/data_container
+    # image: busybox
     stdin_open: true
     tty: true
     links:
       - mongo
     volumes:
-      - ./site:/var/www/html
+      - ./site/build:/var/www/html
 
   nginx:
     build: docker/nginx
     ports:
-      - 8086:80
+      - 8086:8000
     volumes_from:
      - data_container
     volumes:
@@ -29,7 +29,7 @@ services:
       - mongo
     volumes_from:
      - data_container
-    
+
   mongo:
     image: mongo
     volumes:

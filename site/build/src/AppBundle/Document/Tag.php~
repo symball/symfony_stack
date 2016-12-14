@@ -1,0 +1,45 @@
+<?php
+
+namespace AppBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+/**
+ * @MongoDB\Document
+ */
+class Tag
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+    /**
+     * @MongoDB\String
+     */
+    protected $title;
+    /**
+     * @MongoDB\String
+     */
+    protected $slug;
+    /**
+     * @MongoDB\String
+     */
+    protected $type;
+    /**
+     * @MongoDB\String
+     */
+    protected $longValue;
+    /**
+     * @MongoDB\Integer
+     */
+    protected $order;
+    /**
+     * @MongoDB\EmbedMany(targetDocument="TagKeyPair")
+     */
+    protected $keyPairs;
+    /**
+     * @MongoDB\Integer
+     */
+    protected $level;
+    protected $valueMap = array();
+
+}

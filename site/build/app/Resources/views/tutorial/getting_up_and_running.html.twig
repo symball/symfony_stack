@@ -1,0 +1,72 @@
+{% extends 'common.html.twig' %}
+
+{% block body %}
+
+<div class="row medium-8 large-7 columns">
+  <section id="introduction" class="callout">
+    <p>By the end of this tutorial, your device will be serving a Symfony project using Apache. Along the way, we’ll be:</p>
+    <ul>
+      <li>Setting up an editor to easily manage our code</li>
+      <li>Installing the application stack that Symfony will run on</li>
+      <li>Installing a dedicated Symfony Installer</li>
+      <li>Creating a Symfony project and configuring Apache to host it</li>
+    </ul>
+  </section>
+  <section id="editing-our-code">
+    <h2>Editing our Code</h2>
+    <p>We want to have a powerful way to manage our code because the default environment (Ubuntu) lacks one. For these tutorials, I have chosen Atom because it’s lightweight and incredibly extendable thanks to the plugin interface. More information about Atom can be found on the <a href="https://atom.io">official site</a></p>
+    <p>There is a PPA available (thanks to webupd8team) which allows us to install and manage Atom like any other Linux package so, add that first. PPA stands for Personal Package Archive and they are used to install software (or versions of software) which are not available in the official Ubuntu repositories.</p>
+    {{ geshi_highlight('sudo add-apt-repository ppa:webupd8team/atom\rsudo apt-get update\rsudo apt-get install atom', 'bash')|raw }}
+  </section>
+
+  <section id="the-application-stack">
+    <h2>The Application Stack</h2>
+    <p>When complete, we'll be running the project on a full Linux Apache MariaDB PHP (LAMP) stack but database setup will be covered in lesson 2. For now, let’s install our initial application stack:</p>
+    {{ geshi_highlight('sudo apt-get install apache2 php php-intl php-mcrypt php-opcache php-xml libapache2-mod-php composer', 'bash')|raw }}
+    <p>You may notice that in this command, as well as installing PHP, we’re also installing some PHP modules. A full list of Symfony requirements can be found on the <a href="http://symfony.com/doc/current/reference/requirements.html">Requirements for Running Symfony</a> page.</p>
+    <p>For certain functionality, there are a series of polyfills that get downloaded with Symfony and also a requirements checker which we’ll come across later.</p>
+    <h3>Configuration</h3>
+    <p>With the necessary packages installed, let’s configure PHP. First we enable one of the downloaded PHP extensions which isn’t switched on by default</p>
+    {{ geshi_highlight('sudo phpenmod opcache', 'bash')|raw }}
+    <p>The second is to set the default timezone which involves editing the PHP config files for both the Apache module and the command line interface. Search for date.timezone, uncomment the declaration by removing the semi-colon and replace the value with the Area/City seperated by a slash; reference can be found on the PHP website.</p>
+    {{ geshi_highlight('# /etc/php/7.0/cli/php.ini\r# /etc/php/7.0/apache2/php.ini\r\r;http://php.net/manual/en/timezones.php\rdate.timezone = Asia/Hong_Kong','ini')|raw }}
+  </section>
+
+  <section>User Permissions</section>
+    <h2>User Permissions</h2>
+    <p>With the system packages installed, we’ll next want to make sure our user has permissions to edit the files within the web space later on. Apache runs as www-data so, the simplest solution will be to add our user to the www-data group.</p>
+    {{ geshi_highlight('sudo usermod -aG www-data user_name','bash')|raw}}
+    <p>Don’t forget that we’ll need to log out and back in again for these changes to take effect. After logging back in, let’s change the ownership and permissions on the web server directory away from the default root. If we were to now run id, we’d see that our user is now in the www-data group.</p>
+    {{ geshi_highlight('id', 'bash')|raw }}
+  </section>
+
+  <section id="symfony-dedicated-installer">
+    <h2>Symfony Dedicated Installer</h2>
+    <p>At this point, we have everything we need to install and run Symfony as it can be installed through Composer but a dedicated Symfony installer is the <a href="https://symfony.com/download">officially recommended option</a>. It makes project creation quicker by configureing some default settings for us and some extra template code that will make things simpler later on.</p>
+    {{ geshi_highlight('sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony\rsudo chmod a+x /usr/local/bin/symfony\rsymfony','bash')|raw }}
+    <p>Running the symfony wrapper without any flags presents you with helpful information illustrating the various ways to create a project. We will be using the default settings which results in the latest release.</p>
+    <h3>Creating the Project</h3>
+    <p>At the time of this tutorial, Symfony 3.2 is being used. For new projects, this is recommended over the Long Term Support (LTS) because a new candidate for LTS will be released in 2017 and the coding style will be much closer to it compared to the current 2.8 LTS version of Symfony</p>
+    {{ geshi_highlight('symfony new mytestproject\rcd mytestproject','bash')|raw }}
+  </section>
+
+  <section id="running-the-project">
+    <h2>Running the project</h2>
+    <p>Let’s check whether everything installed correctly using the requirements checker supplied with Symfony</p>
+    {{ geshi_highlight('php bin/symfony_requirements','bash')|raw}}
+    <p>In the case of Ubuntu, we are ready to run Symfony but, there are a couple of warnings. The international extension that ships with Ubuntu is out of date and no PDO module can be found. With neither of these considered a problem, let’s use the built in PHP server in conjunction with the Symfony CLI to check the project actually runs.</p>
+    {{ geshi_highlight('php bin/console server:run','bash')|raw }}
+    <p>With the green light given, open the browser and visit the given URL. You should be greeted by a welcome message telling us what version of Symfony is running and where the project is located.</p>
+    <h3>Using Apache</h3>
+    <p>So far, we’ve done everything from our home directory and you might be thinking to just drop the project we created in to the web server root, which with Ubuntu is</p>
+    {{ geshi_highlight('sudo mv myproject/* /var/www/html','bash')|raw }}
+    <p>If we check what files are in the project directory, you’ll note that there isn’t an index file or even files that we recognise as runnable. For Symfony, the public root is represented by the web directory  Normally, you’d expect an index.php or index.html; here the index file is app.php. Because is non-standard, let’s go and modify our Apache configuration to reflect these changes.</p>
+    {{ geshi_highlight('# /etc/apache2/sites-available/000-default.conf\r\rDocumentRoot /var/www/html/web\rDirectoryIndex app.php','ini')|raw }}
+    <p>We need to reload the Apache configuration</p>
+    {{ geshi_highlight('sudo apachectl restart','bash')|raw }}
+    <p>If we visit our browser and reload the page, we’re greeted with an error page. The reason is Symfony <a href="http://symfony.com/doc/current/setup/file_permissions.html">requires the project location to be writable</a> by both the web server and PHP command line user (www-data).</p>
+    {{ geshi_highlight('sudo chown -R www-data:www-data /var/www/html\rsudo chmod -R 775 /var/www/html','bash')|raw }}
+    <p>Now, go back to your browser and reload the page, if you are greeted with the Symfony welcome message, congratulations, you have successfully setup Symfony and are ready to move on to the <a href="#">second tutorial</a></p>
+  </section>
+</div>
+{% endblock %}

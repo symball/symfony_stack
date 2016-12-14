@@ -1,0 +1,42 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+sonata_admin:
+  templates:
+    edit:       AppBundle:sonata:base_edit.html.twig
+
+parameters:
+#    parameter_name: value
+services:
+
+  sonata.admin.post:
+    class: AppBundle\Admin\PostAdmin
+    tags:
+      - { name: sonata.admin, manager_type: doctrine_mongodb, group: "Blog Management", label: "Posts"}
+    arguments:
+      - ~
+      - AppBundle\Document\Post
+      - ~
+    calls:
+      - [ setTranslationDomain, [AppBundle]]
+
+  sonata.admin.tag:
+    class: AppBundle\Admin\TagAdmin
+    tags:
+      - { name: sonata.admin, manager_type: doctrine_mongodb, group: "Administration", label: "Tags" }
+    arguments:
+      - ~
+      - AppBundle\Document\Tag
+      - ~
+    calls:
+      - [ setTranslationDomain, [AppBundle]]
+
+    sonata.admin.tagkeypair:
+      class: AppBundle\Admin\TagKeyPairAdmin
+      tags:
+        - { name: sonata.admin, manager_type: doctrine_mongodb, group: "Administration", label: "Tag Key Pairs", show_in_dashboard: false }
+      arguments:
+        - ~
+        - AppBundle\Document\TagKeyPair
+        - ~
+      calls:
+        - [ setTranslationDomain, [AppBundle]]

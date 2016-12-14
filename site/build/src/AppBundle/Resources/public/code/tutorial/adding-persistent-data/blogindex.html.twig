@@ -1,0 +1,24 @@
+{# app/Resources/views/blog/index.html.twig #}
+{% extends 'common.html.twig' %}
+
+{% block body %}
+<div class="row medium-8 large-7 columns">
+  {# Start looping through the posts passed to the template #}
+  {% for post in posts %}
+
+    <h2>
+      <a href="#">{{ post.title }}</a>
+    </h2>
+    <p class="lead">by <a href="{{ path('blog_singular', {id:post.id}) }}">Start Bootstrap</a></p>
+    <p><span class="glyphicon glyphicon-time"></span> Posted on {{ post.postedAt|date() }}</p>
+
+    <hr>
+    <img class="img-responsive" src="http://placehold.it/900x300" alt="" />
+    <hr>
+    <p>{{ post.summary }}</p>
+    <a class="btn btn-primary" href="{{ path('blog_singular', {id:post.id}) }}">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+    <hr>
+
+  {% endfor %}
+</div>
+{% endblock %}

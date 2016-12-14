@@ -1,0 +1,27 @@
+{% extends 'common.html.twig' %}
+
+{% block body %}
+<div class="row medium-8 large-7 columns">
+
+  <section id="introduction" class="callout">
+    <p>By the end of this lesson, you’ll have a basic comments system attached to your blog. Along the way, we’ll be:</p>
+    <ul>
+      <li>Using the comment entity to quickly building a form</li>
+      <li>Handling Submission</li>
+      <li>Creating a simple notification using the FlashBag</li>
+      <li>Adding validation</li>
+      <li>Setting the for theme</li>
+    </ul>
+  </section>
+
+  <section id="creating-a-form">
+    <h2>Creating a Form</h2>
+    <p>In an earlier lesson, when we created the comment entity we also created the backend for our form. The Symfony Form Builder takes a data object and uses it as a template for inputted data; this also means it is very simple to pre-populate forms whilst still at the data level.</p>
+
+    {{ file('adding-persistent-data','Comment.php','php')|raw }}
+
+
+
+
+</div>
+{% endblock %}
