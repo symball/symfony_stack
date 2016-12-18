@@ -1,166 +1,192 @@
 {% extends 'common.html.twig' %}
+{% set page_title = 'Tutorial 3<br />Adding Persistent Data' %}
 
 {% block body %}
-<div class="row medium-8 large-7 columns">
+<div class="row">
 
-  <section id="introduction" class="callout">
-    <p>By the end of this lesson, you’ll have integration between Symfony and the Database setup and a practical understanding of how to use the necessary functions to start saving and retrieving blog posts. Along the way, we’ll be:</p>
-    <ul>
-      <li>Setting up MySQL</li>
-      <li>Getting to grips with internal configuration</li>
-      <li>Defining data objects</li>
-      <li>Persisting and Retrieving data</li>
-      <li>Using data in the template</li>
-      <li>Handling dynamic URI parameters</li>
-    </ul>
-  </section>
+  <div id="content" class="medium-8 large-9 columns">
+    <section id="introduction" class="callout">
+      <p>By the end of this lesson, you’ll have integration between Symfony and the Database setup and a practical understanding of how to use the necessary functions to start saving and retrieving blog posts. Along the way, we’ll be:</p>
+      <ul>
+        <li>Setting up MySQL</li>
+        <li>Getting to grips with internal configuration</li>
+        <li>Defining data objects</li>
+        <li>Persisting and Retrieving data</li>
+        <li>Using data in the template</li>
+        <li>Handling dynamic URI parameters</li>
+      </ul>
+    </section>
 
-  <section id="setting-up-mysql">
-    <h2>Installing MySQL</h2>
-    <p>To start with, we’ll want to add a storage engine and I’ve chosen MySQL as it is very common and supported out of the box with Symfony.</p>
+    <section id="setting-up-mysql" data-magellan-target="setting-up-mysql">
+      <h2>Installing MySQL</h2>
+      <p>To start with, we’ll want to add a storage engine and I’ve chosen MySQL as it is very common and supported out of the box with Symfony.</p>
 
-    {{ geshi_highlight('sudo apt-get update\rsudo apt-get install mysql-server php-mysql','bash')|raw }}
+      {{ geshi_highlight('sudo apt-get update\rsudo apt-get install mysql-server php-mysql','bash')|raw }}
 
-    <p>Notice that in the above, we’ve also downloaded the PHP MySQL module. Let’s start by activating that and restarting Apache</p>
+      <p>Notice that in the above, we’ve also downloaded the PHP MySQL module. Let’s start by activating that and restarting Apache</p>
 
-    {{ geshi_highlight('sudo phpenmod pdo_mysql\rsudo service apache2 restart','bash')|raw }}
+      {{ geshi_highlight('sudo phpenmod pdo_mysql\rsudo service apache2 restart','bash')|raw }}
 
-    <p>We want to future proof our application making it capable of supporting encrypted passwords (some hash libraries need the full four bytes), symbols and emojis. To do this, we’re going to change the character encoding settings in MySQL to utf8mb4. In short, this character set, uses a maximum of four bytes instead of three as in UTF-8.</p>
+      <p>We want to future proof our application making it capable of supporting encrypted passwords (some hash libraries need the full four bytes), symbols and emojis. To do this, we’re going to change the character encoding settings in MySQL to utf8mb4. In short, this character set, uses a maximum of four bytes instead of three as in UTF-8.</p>
 
-    {{ geshi_highlight('#/etc/mysql/my.cnf\r[client]\rdefault-character-set = utf8mb4\r\r[mysql]\rdefault-character-set = utf8mb4\r\r[mysqld]\rcharacter-set-client-handshake = FALSE\rcharacter-set-server = utf8mb4\rcollation-server = utf8mb4_unicode_ci','conf')|raw }}
+      {{ geshi_highlight('#/etc/mysql/my.cnf\r[client]\rdefault-character-set = utf8mb4\r\r[mysql]\rdefault-character-set = utf8mb4\r\r[mysqld]\rcharacter-set-client-handshake = FALSE\rcharacter-set-server = utf8mb4\rcollation-server = utf8mb4_unicode_ci','conf')|raw }}
 
-    <p>We then want to reload MySQL to refresh the configuration</p>
+      <p>We then want to reload MySQL to refresh the configuration</p>
 
-    {{ geshi_highlight('sudo systemctl restart mysql','bash')|raw }}
+      {{ geshi_highlight('sudo systemctl restart mysql','bash')|raw }}
 
-    <p>With MySQL configured, let’s create a Database user and schema.</p>
+      <p>With MySQL configured, let’s create a Database user and schema.</p>
 
-    {{ geshi_highlight('# Login in to MySQL from the command line\rmysql -u root -p\rcreate database symfonydb;\r# Create a limited user for Symfony to work with\rgrant all privileges on symfonydb.* to symfonyuser@localhost identified by \'symfonypwd\';\r# Refresh MySQL\rflush privileges;\rexit\r','bash')|raw }}
-  </section>
+      {{ geshi_highlight('# Login in to MySQL from the command line\rmysql -u root -p\rcreate database symfonydb;\r# Create a limited user for Symfony to work with\rgrant all privileges on symfonydb.* to symfonyuser@localhost identified by \'symfonypwd\';\r# Refresh MySQL\rflush privileges;\rexit\r','bash')|raw }}
+    </section>
 
-  <section id="symfony-configuration">
-    <h2>Symfony Configuration</h2>
-    <p>Symfony configuration can be defined in various formats (ini, raw PHP, XML and YAML), even using different formats across the same project.</p>
-    <p>We’ll be using YAML (Yet Another Markup Language ) because Symfony Standard Edition uses it by default. It is a quick to write, human friendly way of defining data serialization.</p>
+    <section id="symfony-configuration" data-magellan-target="symfony-configuration">
+      <h2>Symfony Configuration</h2>
+      <p>Symfony configuration can be defined in various formats (ini, raw PHP, XML and YAML), even using different formats across the same project.</p>
+      <p>We’ll be using YAML (Yet Another Markup Language ) because Symfony Standard Edition uses it by default. It is a quick to write, human friendly way of defining data serialization.</p>
 
-    <p>Find the Doctrine section:</p>
-    <ul>
-      <li>Key/values are split through use of a colon</li>
-      <li>YAML uses indentation to depict depth</li>
-      <li>When values are wrapped in %, it infers variable substitution</li>
-    </ul>
+      <p>Find the Doctrine section:</p>
+      <ul>
+        <li>Key/values are split through use of a colon</li>
+        <li>YAML uses indentation to depict depth</li>
+        <li>When values are wrapped in %, it infers variable substitution</li>
+      </ul>
 
-    {{ file(page_key, 'doctrine.yml', 'config.yml')}}
+      {{ file(page_key, 'doctrine.yml', 'config.yml')|raw }}
 
-    <p>Note that the database details are using substitution, right now though we want to declare that we are using utf8mb4 so make the small changes here</p>
+      <p>Note that the database details are using substitution, right now though we want to declare that we are using utf8mb4 so make the small changes here</p>
 
-    <p>With those changes made, scroll to the top of the file and see that the first few lines are underneath imports, parameters being one.</p>
-    <p>We could include the secrets directly in this configuration file. If intending to put the project in to version control, it might lead to sensitive information exposure. The parameters.yml file is in the default gitignore file, defaults (which do get submitted to VCS) are defined in parameters.yml.dist.</p>
-  </section>
+      <p>With those changes made, scroll to the top of the file and see that the first few lines are underneath imports, parameters being one.</p>
+      <p>We could include the secrets directly in this configuration file. If intending to put the project in to version control, it might lead to sensitive information exposure. The parameters.yml file is in the default gitignore file, defaults (which do get submitted to VCS) are defined in parameters.yml.dist.</p>
+    </section>
 
-  <section id="defining-the-data">
-    <h2>Defining the Data</h2>
-    <p>We’ve just configured Doctrine but, what is it? Doctrine is a mature set of libraries with the sole purpose of making data management simpler. This is done through:</p>
-    <ul>
-      <li>An Object Relational Mapper (ORM) that handles the database structure</li>
-      <li>An abstraction layer that splits the CRUD operations in to a set of clean methods</li>
-      <li>An alternative to writing raw SQL statements called Doctrine Query Language (DQL)</li>
-    </ul>
-    <p>With Doctrine, let’s convert our static blog page to something that can be managed by the database. The first thing we will want to do is define the data object. To Symfony, we define these objects (which use a Relational Database) as entities within the bundle.</p>
+    <section id="defining-the-data" data-magellan-target="defining-the-data">
+      <h2>Defining the Data</h2>
+      <p>We’ve just configured Doctrine but, what is it? Doctrine is a mature set of libraries with the sole purpose of making data management simpler. This is done through:</p>
+      <ul>
+        <li>An Object Relational Mapper (ORM) that handles the database structure</li>
+        <li>An abstraction layer that splits the CRUD operations in to a set of clean methods</li>
+        <li>An alternative to writing raw SQL statements called Doctrine Query Language (DQL)</li>
+      </ul>
+      <p>With Doctrine, let’s convert our static blog page to something that can be managed by the database. The first thing we will want to do is define the data object. To Symfony, we define these objects (which use a Relational Database) as entities within the bundle.</p>
 
-    {{ file(page_key,'Post.php')|raw }}
+      {{ file(page_key,'Post.php')|raw }}
 
-    <p>With the data class defined (and saved), we can save time by using the CLI to generate a series of methods for setting and getting the object properties for us automatically.</p>
+      <p>With the data class defined (and saved), we can save time by using the CLI to generate a series of methods for setting and getting the object properties for us automatically.</p>
 
-    {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle/Entity/Post','bash')|raw }}
+      {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle/Entity/Post','bash')|raw }}
 
-    <p>Take a quick look at the file again and see how it has grown. We’ll also create a table for handling comments to demonstrate how relationships work.</p>
+      <p>Take a quick look at the file again and see how it has grown. We’ll also create a table for handling comments to demonstrate how relationships work.</p>
 
-    {{ file(page_key, 'Comment.php')|raw }}
+      {{ file(page_key, 'Comment.php')|raw }}
 
-    <p>With a comment entity defined, we make a minor modification to the Post entity.</p>
+      <p>With a comment entity defined, we make a minor modification to the Post entity.</p>
 
-    {{ geshi_highlight('#src/AppBundle/Entity/Post.php\r/**\r * @OneToMany(targetEntity="Comment", mappedBy="post")\r */\rprivate $comments;','php')|raw }}
+      {{ geshi_highlight('#src/AppBundle/Entity/Post.php\r/**\r * @OneToMany(targetEntity="Comment", mappedBy="post")\r */\rprivate $comments;','php')|raw }}
 
-    <p>Previously, we generated the doctrine support code by naming the full namepath of the post entity. Rather than write out the command twice, it is also possible to target the entire namespace.</p>
+      <p>Previously, we generated the doctrine support code by naming the full namepath of the post entity. Rather than write out the command twice, it is also possible to target the entire namespace.</p>
 
-    {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle','bash')|raw }}
+      {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle','bash')|raw }}
 
-    <p>At present, we have laid out the data in our code only, the table doesn’t exist in MySQL yet but, there’s a command that synchronises the two for us</p>
+      <p>At present, we have laid out the data in our code only, the table doesn’t exist in MySQL yet but, there’s a command that synchronises the two for us</p>
 
-    {{ geshi_highlight('php bin/console doctrine:schema:update --force','bash')|raw }}
-  </section>
+      {{ geshi_highlight('php bin/console doctrine:schema:update --force','bash')|raw }}
+    </section>
 
-  <section id="pesistence-and-retrieval">
-    <h2>Persistence and Retrieval</h2>
-    <p>With our data persistence configured to handle the saving of posts, let’s perform a test by creating an extra controller in order to create a couple of posts. Key take aways:</p>
-    <ul>
-      <li>It is the object itself that gets saved or updated with no defined statements necessary; Doctrine calculates the changes needed.</li>
-      <li>The moment changes to the database actually get made is explicitly stated using a flush command</li>
-    </ul>
+    <section id="pesistence-and-retrieval" data-magellan-target="persistence-and-retrieval">
+      <h2>Persistence and Retrieval</h2>
+      <p>With our data persistence configured to handle the saving of posts, let’s perform a test by creating an extra controller in order to create a couple of posts. Key take aways:</p>
+      <ul>
+        <li>It is the object itself that gets saved or updated with no defined statements necessary; Doctrine calculates the changes needed.</li>
+        <li>The moment changes to the database actually get made is explicitly stated using a flush command</li>
+      </ul>
 
-    {{ file(page_key,'TestController.php')|raw }}
+      {{ file(page_key,'TestController.php')|raw }}
 
-    <p>Now, we have the entity, let’s retrieve it. Doctrine uses what are known as repositories for this purpose. Getting the repository for our new post class is simple. We’ll put the following code in to BlogController.</p>
+      <p>Now, we have the entity, let’s retrieve it. Doctrine uses what are known as repositories for this purpose. Getting the repository for our new post class is simple. We’ll put the following code in to BlogController.</p>
 
-    {{ geshi_highlight('// Select the appropriate entity as a source\r$repository = $this->getDoctrine()\r->getRepository(\'AppBundle:Post\')\r// Use one of the built in methods\r->findAll();','php')|raw }}
+      {{ geshi_highlight('// Select the appropriate entity as a source\r$repository = $this->getDoctrine()\r->getRepository(\'AppBundle:Post\')\r// Use one of the built in methods\r->findAll();','php')|raw }}
 
-    <p>Symfony was built with Doctrine in mind, there is a controller ($this) method that gets Doctrine and then we are stating which bundle and entity to be used.</p>
-    <p>For the moment, we’ll keep it simple and and use the findAll() method to retrieve all the posts we have saved to the data store. Full information on the DQL can be found on the <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html">official page</a>.</p>
-    <p>With the query made, we can quickly check the result using the dump method provided by Symfony. This is a version of the native PHP var_dump that offers the output in a much friendlier fashion.</p>
+      <p>Symfony was built with Doctrine in mind, there is a controller ($this) method that gets Doctrine and then we are stating which bundle and entity to be used.</p>
+      <p>For the moment, we’ll keep it simple and and use the findAll() method to retrieve all the posts we have saved to the data store. Full information on the DQL can be found on the <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html">official page</a>.</p>
+      <p>With the query made, we can quickly check the result using the dump method provided by Symfony. This is a version of the native PHP var_dump that offers the output in a much friendlier fashion.</p>
 
-    {{ geshi_highlight('dump($posts);\rdie();','php')|raw }}
+      {{ geshi_highlight('dump($posts);\rdie();','php')|raw }}
 
-    <p>Now go and visit your blog index page and you should see a representation of the posts we made earlier; click the arrows to expand / collapse the information levels.</p>
-  </section>
+      <p>Now go and visit your blog index page and you should see a representation of the posts we made earlier; click the arrows to expand / collapse the information levels.</p>
+    </section>
 
-  <section id="using-data-in-a-template">
-    <h2>Using data in a template</h2>
-    <p>Now we know the data is available, we’ll want to incorporate it in to our site. At the point we tell the the controller to render the template, the second parameter as an array is used to inject data in to the page.</p>
+    <section id="using-data-in-a-template" data-magellan-target="using-data-in-a-template">
+      <h2>Using data in a template</h2>
+      <p>Now we know the data is available, we’ll want to incorporate it in to our site. At the point we tell the the controller to render the template, the second parameter as an array is used to inject data in to the page.</p>
 
-    {{ geshi_highlight('return $this->render("blog/index.html.twig", ["posts" => $posts]);','php')|raw }}
+      {{ geshi_highlight('return $this->render("blog/index.html.twig", ["posts" => $posts]);','php')|raw }}
 
-    <p>With posts available to the template, the next thing to do will be present it</p>
+      <p>With posts available to the template, the next thing to do will be present it</p>
 
-    {{ geshi_highlight('{% for post in posts %}\r  {{ post.title }}\r  {{ post.postedAt | date() }}\r  {{ post.summary }}\r{% endfor %}','php')|raw }}
+      {{ geshi_highlight('{% for post in posts %}\r  {{ post.title }}\r  {{ post.postedAt | date() }}\r  {{ post.summary }}\r{% endfor %}','php')|raw }}
 
-    <ul>
-      <li>Unlike PHP native foreach loop, we put the singular first</li>
-      <li>Displaying variables works by referencing the object then property</li>
-      <li><a href="http://twig.sensiolabs.org/doc/filters/index.html">Filters</a> can be added by using a pipe and then the filter name.</li>
-      <li>The date filter uses the default timezone by default. This can be changed directly in the brackets using the normal PHP date format or setting a default for Twig itself.</li>
-    </ul>
+      <ul>
+        <li>Unlike PHP native foreach loop, we put the singular first</li>
+        <li>Displaying variables works by referencing the object then property</li>
+        <li><a href="http://twig.sensiolabs.org/doc/filters/index.html">Filters</a> can be added by using a pipe and then the filter name.</li>
+        <li>The date filter uses the default timezone by default. This can be changed directly in the brackets using the normal PHP date format or setting a default for Twig itself.</li>
+      </ul>
 
-    <p>With the above changes in place, reload your blog to show your changes. At this point, you should have a simple listing which shows the two posts we made from the test controller earlier. We want to view the full post however so, we need to create another controller and template.</p>
-  </section>
+      <p>With the above changes in place, reload your blog to show your changes. At this point, you should have a simple listing which shows the two posts we made from the test controller earlier. We want to view the full post however so, we need to create another controller and template.</p>
+    </section>
 
-  <section id="uri-parameters">
-    <h2>URI Parameters</h2>
-    <p>Our controllers have had fixed URLs but we will be using dynamic data so, things will be a little bit different to how we have set up our pages so far.</p>
-    <ul>
-      <li>In the route, we have wrapped ID in curly braces. This means that it will match the URI path so long as there is a value after the blog part.</li>
-      <li>For using a variable in the URI, it is made available as a function parameter by the same identifier.</li>
-      <li>The repository method “find” uses the defined index for the data object and looks for a single entry. In our case, this is the ID and is the equivalent of using findOneById</li>
-    </ul>
-    {{ geshi_highlight('/**\r * @Route("/blog/{id}", name="blog_singular")\r*/\rpublic function singularAction($id)\r{\r  $post = $this->getDoctrine()\r  ->getRepository("AppBundle:Post")\r  ->find($id);\r\r  return $this->render("blog/singular.html.twig", ["post" => $post]);\r}','php')|raw }}
+    <section id="uri-parameters" data-magellan-target="uri-parameters">
+      <h2>URI Parameters</h2>
+      <p>Our controllers have had fixed URLs but we will be using dynamic data so, things will be a little bit different to how we have set up our pages so far.</p>
+      <ul>
+        <li>In the route, we have wrapped ID in curly braces. This means that it will match the URI path so long as there is a value after the blog part.</li>
+        <li>For using a variable in the URI, it is made available as a function parameter by the same identifier.</li>
+        <li>The repository method “find” uses the defined index for the data object and looks for a single entry. In our case, this is the ID and is the equivalent of using findOneById</li>
+      </ul>
+      {{ geshi_highlight('/**\r * @Route("/blog/{id}", name="blog_singular")\r*/\rpublic function singularAction($id)\r{\r  $post = $this->getDoctrine()\r  ->getRepository("AppBundle:Post")\r  ->find($id);\r\r  return $this->render("blog/singular.html.twig", ["post" => $post]);\r}','php')|raw }}
 
-    <p>With the controller setup, let’s create the template for our blog post. Just like before, we’ll simply copy an existing template and save it under a different name before making the changes.</p>
-    <p>Just like I used index as a name to indicate the default template name for a directory index, I choose to name my individual entry templates singular in order to quickly identify relevant files.</p>
-    <p>You don’t have to follow this convention but, I’d strongly recommend adopting some common convention as it will make life easier for you and others as the project grows or gets shared. With a small note in some developer documentation about how things are named, you will have saved time and effort in the future; anything that makes a project predictable is good design.</p>
-    <p>In the template itself there are only a few changes we need to make</p>
-    <ul>
-      <li>Edit the header block to show our title and post information</li>
-      <li>Edit the body block to display our post. Notice that I’ve included a raw filter on the content part of our post. Twig escapes HTML for security reasons; raw outputs the data as is.</li>
-    </ul>
-    <p>With our controller and template ready, let’s change the blog listing template to make the links work.</p>
+      <p>With the controller setup, let’s create the template for our blog post. Just like before, we’ll simply copy an existing template and save it under a different name before making the changes.</p>
+      <p>Just like I used index as a name to indicate the default template name for a directory index, I choose to name my individual entry templates singular in order to quickly identify relevant files.</p>
+      <p>You don’t have to follow this convention but, I’d strongly recommend adopting some common convention as it will make life easier for you and others as the project grows or gets shared. With a small note in some developer documentation about how things are named, you will have saved time and effort in the future; anything that makes a project predictable is good design.</p>
+      <p>In the template itself there are only a few changes we need to make</p>
+      <ul>
+        <li>Edit the header block to show our title and post information</li>
+        <li>Edit the body block to display our post. Notice that I’ve included a raw filter on the content part of our post. Twig escapes HTML for security reasons; raw outputs the data as is.</li>
+      </ul>
+      <p>With our controller and template ready, let’s change the blog listing template to make the links work.</p>
 
-    {{ geshi_highlight('<a href="{{ path("blog_singular", {id:post.id}) }}">{{ post.title}}</a>','html')|raw }}
+      {{ geshi_highlight('<a href="{{ path("blog_singular", {id:post.id}) }}">{{ post.title}}</a>','html')|raw }}
 
-    <p>Notice that now we are using a second parameter for the path function. This second parameter, as a JSON object, declares the URI parameters we want to use in conjunctions with the blog_singular route.</p>
-    <p>With all the necessary changes in place, go ahead and reload your blog and try clicking a post link. You now have a working blog and this concludes lesson 3, congratulations.</p>
-    <p>In the next lesson, we’ll be adding a layer of management which allows us to manage blog posts and user authentication for who can access the management interface.</p>
-  </section>
+      <p>Notice that now we are using a second parameter for the path function. This second parameter, as a JSON object, declares the URI parameters we want to use in conjunctions with the blog_singular route.</p>
+      <p>With all the necessary changes in place, go ahead and reload your blog and try clicking a post link. You now have a working blog and this concludes lesson 3, congratulations.</p>
+      <p>In the next lesson, we’ll be adding a layer of management which allows us to manage blog posts and user authentication for who can access the management interface.</p>
+    </section>
 
+    <section id="experiment" class="callout success">
+      <p>Things you should try</p>
+      <ul>
+        <li>Read up on the Doctrine Query Language <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html">here</a></li>
+        <li>Try to create an entity using the built in generator {{ geshi_highlight('php bin/console doctrine:generate:entity', 'bash')|raw }}</li>
+      </ul>
 
+    </section>
+
+  </div>
+
+  <div id="magellan" class="medium-4 large-3 columns" data-sticky-container>
+    <nav class="columns sticky" data-sticky data-anchor="content" data-sticky-on="medium">
+
+      <ul class="menu vertical" data-magellan>
+        <li><a href="#setting-up-mysql">Setting up MySQL</a></li>
+        <li><a href="#symfony-configuration">Symfony Configuration</a></li>
+        <li><a href="#defining-the-data">Defining the Data</a></li>
+        <li><a href="#persistence-and-retrieval">Persistence and Retrieval</a></li>
+        <li><a href="#using-data-in-a-template">Using data in a Template</a></li>
+        <li><a href="#uri-parameters">URI Parameters</a></li>
+      </ul>
+
+    </nav>
+  </div>
 </div>
 {% endblock %}

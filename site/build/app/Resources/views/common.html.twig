@@ -7,7 +7,7 @@
 
     <nav class="top-bar" style="">
       <div class="top-bar-title">
-        <a href="/"><img src="/bundles/app/img/logo.png" alt="simonball.me" /></a>
+        <a href="{{ path('home') }}"><img src="/bundles/app/img/logo.png" alt="simonball.me" /></a>
         <span class="float-right" data-responsive-toggle="responsive-menu" data-hide-for="medium">
           <button class="menu-icon dark" type="button" data-toggle></button>
         </span>
@@ -32,6 +32,9 @@
                 </li>
                 <li>
                   <a href="{{ path('tutorial', {'title':'an-administration-interface'}) }}">Admin Interface</a>
+                </li>
+                <li>
+                  <a href="{{ path('tutorial', {'title':'user-interaction'}) }}">User Interaction</a>
                 </li>
                 <li><div class="seperator">Advanced</div></li>
                 <li>

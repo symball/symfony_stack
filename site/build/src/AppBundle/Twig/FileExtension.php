@@ -66,6 +66,7 @@ class FileExtension extends \Twig_Extension
         return $html;
       }
     }
+
     public function presentFile($pageKey, $fileName, $display='') {
       if(!$display) { $display = $fileName; }
       return '
@@ -80,7 +81,7 @@ class FileExtension extends \Twig_Extension
     }
 
     private function getFileCode($pageKey, $fileName) {
-      $realPath = __DIR__.'/../Resources/public/code/'.$pageKey;
+      $realPath = __DIR__.'/../Resources/public/code/tutorial/'.$pageKey;
       // $projectName = explode('/',$fileName);
       // $projectName = end($projectName);
       $finder = new Finder();
@@ -113,7 +114,7 @@ class FileExtension extends \Twig_Extension
             return 'Type not defined in extension: '.$file->getExtension();
             break;
         }
+        return $this->highlighter->highlight($file->getContents(),$type);
       }
-      return $this->highlighter->highlight($file->getContents(),$type);
     }
 }

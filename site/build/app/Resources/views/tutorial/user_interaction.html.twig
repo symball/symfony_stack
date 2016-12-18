@@ -1,0 +1,66 @@
+{% extends 'common.html.twig' %}
+{% set page_title = 'Tutorial 5<br />User Interaction' %}
+
+{% block body %}
+<div class="row">
+  <div id="content" class="medium-8 large-9 columns">
+
+    <section id="introduction" class="callout">
+      <p>By the end of this lesson, you’ll have a basic comments system attached to your blog. Along the way, we’ll be:</p>
+      <ul>
+        <li>Using the comment entity to quickly building a form</li>
+        <li>Handling Submission</li>
+        <li>Creating a simple notification using the FlashBag</li>
+        <li>Adding validation</li>
+        <li>Setting the for theme</li>
+      </ul>
+    </section>
+
+    <section id="creating-a-form">
+      <h2>Creating a Form</h2>
+      <p>In an earlier lesson, when we created the comment entity we also created the backend for our form. The Symfony Form Builder takes a data object and uses it as a template for inputted data.</p>
+
+      {{ file(page_key,'BlogController-form-define.php','BlogController.php')|raw }}
+
+      <p>With the form passed to the template, Twig has helpers to control rendering of a complete form in one line down to control of labels, input fields and feedback.</p>
+
+      {{ geshi_highlight('{{ form(contact_form) }}')|raw }}
+
+      <p>With the form ready to submit, we need to add code to the controller.</p>
+
+      {{ file(page_key,'BlogController-form-submit.php','BlogController.php')|raw }}
+
+    </section>
+
+    <section id="the-symfony-flashbag">
+      <h2>The Symfony FlashBag</h2>
+      <p>Symfony has a useful feature for temporarily storing key/value data called the <a href="https://symfony.com/doc/current/components/http_foundation/sessions.html">FlashBag</a>, maintaining their state until accessed and then unsetting.</p>
+      <p>It can be accessed through either the Session or Request object; if using a form the Request object is already present so there is no need to include any more code.</p>
+
+      <p>There is a <a href="http://api.symfony.com/3.2/Symfony/Component/HttpFoundation/Session/Flash/FlashBagInterface.html#method_peek">peek method</a> which allows you to check for whether the value exists without access though.</p>
+
+      {{ file(page_key,'twig-notification.html.twig','base.html.twig')|raw }}
+
+
+    </section>
+
+    <section id="adding-validation">
+      <h2>Adding Validation</h2>
+      <p>Checking for correctness of data is defined on the object itself and as provides the benefit that it can be used on more than just form input.</p>
+      <p>In the Standard Edition, the validator component is preconfigured to use annotations so to get started, all you need to do is include it through a use statement and add the annotations.</p>
+      {{ file(page_key, 'Comment.php')|raw }}
+      <p>The assertions often have a series of options available to them in order to craft how strict you want them to be and the possibility of overriding the default messages displayed. For more information on the built in validation types, please see the <a href="http://symfony.com/doc/current/reference/constraints.html" target="_blank">officical documentation page</a>.</p>
+
+    </section>
+
+    <section id="setting-the-form-theme">
+      <h2>Setting the for theme</h2>
+    </section>
+
+    <section id="experiment" class="callout success">
+      <p>Things you should try</p>
+    </section>
+
+  </div>
+</div>
+{% endblock %}

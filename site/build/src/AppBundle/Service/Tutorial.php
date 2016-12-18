@@ -23,8 +23,8 @@ class Tutorial {
   public function set($reference) {
 
     $this->internalReference = str_replace('-', '_', $reference);
-    $this->$reference = explode('/', $reference);
-    $this->$reference = end($this->$reference);
+    $this->reference = explode('/', $reference);
+    $this->reference = end($this->reference);
 
     // Check whether the tutorial exists
     if (!$this->templating->exists($this->internalReference.'.html.twig')) {

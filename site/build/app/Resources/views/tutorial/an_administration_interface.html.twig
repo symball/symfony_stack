@@ -1,114 +1,136 @@
 {% extends 'common.html.twig' %}
+{% set page_title = 'Tutorial 4<br />An Administration Interface' %}
 
 {% block body %}
-<div class="row medium-8 large-7 columns">
+<div class="row">
+  <div id="content" class="medium-8 large-9 columns">
 
-  <section id="introduction" class="callout">
-    <p>By the end of this lesson, you’ll have a password protected admin area to handle site management. Along the way:</p>
-    <ul>
-      <li>Installing extra bundles</li>
-      <li>Introduction to services</li>
-      <li>Setting up Users through the CLI</li>
-      <li>User authentication and basic security</li>
-      <li>Creating our first admin</li>
-    </ul>
-  </section>
+    <section id="introduction" class="callout">
+      <p>By the end of this lesson, you’ll have a password protected admin area to handle site management. Along the way:</p>
+      <ul>
+        <li>Installing extra bundles</li>
+        <li>Introduction to services</li>
+        <li>Setting up Users through the CLI</li>
+        <li>User authentication and basic security</li>
+        <li>Creating our first admin</li>
+      </ul>
+    </section>
 
-  <section id="installing-bundles">
-    <h2>Installing bundles</h2>
-    <p>Composer is a PHP dependency manager responsible for installing site components in the same manner as Linux packages. It can be configured through a the CLI and/or a JSON schema file. It retrieves assets (by default) from Packagist, a PHP oriented software repository.</p>
-    <p>For the user management side of things, we’ll be using the <a href="https://packagist.org/packages/friendsofsymfony/user-bundle">FOSUserBundle</a>. From a shell within your project directory, we first download the bundle itself</p>
+    <section id="installing-bundles" data-magellan-target="installing-bundles">
+      <h2>Installing bundles</h2>
+      <p>Composer is a PHP dependency manager responsible for installing site components in the same manner as Linux packages. It can be configured through a the CLI and/or a JSON schema file. It retrieves assets (by default) from Packagist, a PHP oriented software repository.</p>
+      <p>For the user management side of things, we’ll be using the <a href="https://packagist.org/packages/friendsofsymfony/user-bundle">FOSUserBundle</a>. From a shell within your project directory, we first download the bundle itself</p>
 
-    {{ geshi_highlight('composer require friendsofsymfony/user-bundle "~2.0@dev"','bash')|raw }}
+      {{ geshi_highlight('composer require friendsofsymfony/user-bundle "~2.0@dev"','bash')|raw }}
 
-    <p>With the code downloaded, it still isn’t part of our Symfony project yet. There is a kernel (core) which creates the operating environment in which Symfony operates and the Standard Edition provides a space for us to configure the kernel.</p>
+      <p>With the code downloaded, it still isn’t part of our Symfony project yet. There is a kernel (core) which creates the operating environment in which Symfony operates and the Standard Edition provides a space for us to configure the kernel.</p>
 
-    {{ geshi_highlight('// app/AppKernel.php\rpublic function\rregisterBundles()\r{\r  $bundles = array(\r  new FOS\UserBundle\FOSUserBundle(),\r  ...','php')|raw }}
+      {{ geshi_highlight('// app/AppKernel.php\rpublic function\rregisterBundles()\r{\r  $bundles = array(\r  new FOS\UserBundle\FOSUserBundle(),\r  ...','php')|raw }}
 
-    <p>With the User system engaged, we still need to configure it however.</p>
+      <p>With the User system engaged, we still need to configure it however.</p>
 
-    <h3>FOSUser Configuration</h3>
-    <p>FOSUser bundle can make use of more than just MySQL (ORM) and this needs to be set by default so, we’ll configure the bundle in our app/config.</p>
-    <ul>
-      <li>Uncommenting the translator key uses the builtin language support (if present) otherwise instead of displaying “username”, you will be presented with “security.login.username”</li>
-      <li>firewall_name is a security rule</li>
-      <li>user_class is the entity representing the user object</li>
-    </ul>
+      <h3>FOSUser Configuration</h3>
+      <p>FOSUser bundle can make use of more than just MySQL (ORM) and this needs to be set by default so, we’ll configure the bundle in our app/config.</p>
+      <ul>
+        <li>Uncommenting the translator key uses the builtin language support (if present) otherwise instead of displaying “username”, you will be presented with “security.login.username”</li>
+        <li>firewall_name is a security rule</li>
+        <li>user_class is the entity representing the user object</li>
+      </ul>
 
-    {{ geshi_highlight('# app/config/config.yml\r\r# Uncomment\rtranslator: { fallbacks: ["%locale%"] }\r\r# Add\rfos_user:\r db_driver: orm\r firewall_name: main\r user_class: AppBundle\Entity\User','bash')|raw }}
-  </section>
+      {{ geshi_highlight('# app/config/config.yml\r\r# Uncomment\rtranslator: { fallbacks: ["%locale%"] }\r\r# Add\rfos_user:\r db_driver: orm\r firewall_name: main\r user_class: AppBundle\Entity\User','bash')|raw }}
+    </section>
 
-  <section id="security">
-    <h2>Security</h2>
-    <p>Security is a first class citizen in Symfony and user authorisation (verifying a user has access) is provided by the firewall. Note that authentication (challenging with a username/password request) and authorisation are not the same thing and the latter is handled by FOSUser. We define these settings in the security configuration file.</p>
+    <section id="security" data-magellan-target="security">
+      <h2>Security</h2>
+      <p>Security is a first class citizen in Symfony and user authorisation (verifying a user has access) is provided by the firewall. Note that authentication (challenging with a username/password request) and authorisation are not the same thing and the latter is handled by FOSUser. We define these settings in the security configuration file.</p>
 
-    {{ file(page_key,'security.yml')|raw }}
+      {{ file(page_key,'security.yml')|raw }}
 
-  </section>
+    </section>
 
-  <section id="routing">
-    <h2>Routing</h2>
-    <p>In an application that makes use of multiple bundles, it is possible that there will be controllers and routes present beyond our own AppBundle. A user system is no exception, take a look in the following directory.</p>
+    <section id="routing" data-magellan-target="routing">
+      <h2>Routing</h2>
+      <p>In an application that makes use of multiple bundles, it is possible that there will be controllers and routes present beyond our own AppBundle. A user system is no exception, take a look in the following directory.</p>
 
-    {{ file(page_key,'security.xml')|raw }}
+      {{ file(page_key,'security.xml')|raw }}
 
-    <p>There are a series of xml files which define routes. We will be using only the security.xml route as the site won’t feature public registration. Don’t be alarmed that the routes are defined in a different format from the annotations we have used so far however; it’s just different. To include extra route definitions in our project, there is a config file dedicated to it.</p>
+      <p>There are a series of xml files which define routes. We will be using only the security.xml route as the site won’t feature public registration. Don’t be alarmed that the routes are defined in a different format from the annotations we have used so far however; it’s just different. To include extra route definitions in our project, there is a config file dedicated to it.</p>
 
-    {{ geshi_highlight('# app/config/routing.yml\rfos_user:\r\r  resource: "@FOSUserBundle/Resources/config/routing/security.xml"','bash')|raw }}
-  </section>
+      {{ geshi_highlight('# app/config/routing.yml\rfos_user:\r\r  resource: "@FOSUserBundle/Resources/config/routing/security.xml"','bash')|raw }}
+    </section>
 
-  <section id="creating-users">
-    <h2>Creating Users</h2>
-    <p>With FOSUser and some security setup, we are ready to create our User Object. To do this, we will create another entity similar to the post entity except we are extending the FOSUser bundle which gets pulled in with a use statement.</p>
+    <section id="creating-users" data-magellan-target="creating-users">
+      <h2>Creating Users</h2>
+      <p>With FOSUser and some security setup, we are ready to create our User Object. To do this, we will create another entity similar to the post entity except we are extending the FOSUser bundle which gets pulled in with a use statement.</p>
 
-    {{ file(page_key,'User.php')|raw }}
+      {{ file(page_key,'User.php')|raw }}
 
-    <p>The user object we are extending already includes many of the properties you would expect, ID being one but we need to declare it as the primary key ourselves. If you want to find out more about the user object; it can be found at</p>
-    <p>We haven’t yet generated the setters and getters or synced the schema to the database so, we need to do that.</p>
+      <p>The user object we are extending already includes many of the properties you would expect, ID being one but we need to declare it as the primary key ourselves. If you want to find out more about the user object; it can be found at</p>
+      <p>We haven’t yet generated the setters and getters or synced the schema to the database so, we need to do that.</p>
 
-    {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle/Entity/User\rphp bin/console doctrine:schema:update --force','bash')|raw }}
+      {{ geshi_highlight('php bin/console doctrine:generate:entities AppBundle/Entity/User\rphp bin/console doctrine:schema:update --force','bash')|raw }}
 
-    <p>Now we’ve set up the User bundle but haven’t included registration. We’ll instead use the CLI to create our account and promote them to admin.</p>
+      <p>Now we’ve set up the User bundle but haven’t included registration. We’ll instead use the CLI to create our account and promote them to admin.</p>
 
-    {{ geshi_highlight('php bin/console fos:user:create adminuser test@example.com adminpassword\rphp bin/console fos:user:promote adminuser ROLE_ADMIN','bash')|raw }}
+      {{ geshi_highlight('php bin/console fos:user:create adminuser test@example.com adminpassword\rphp bin/console fos:user:promote adminuser ROLE_ADMIN','bash')|raw }}
 
-    <p>Now, try logging in<a href="http://127.0.0.1/app_dev.php/login">http://127.0.0.1/app_dev.php/login</a></p>
+      <p>Now, try logging in<a href="http://127.0.0.1/app_dev.php/login">http://127.0.0.1/app_dev.php/login</a></p>
 
-    <p>After logging in, look at the debug toolbar. Previously, it was showing “anon” next to the user but instead now it shows our adminuser</p>
-  </section>
+      <p>After logging in, look at the debug toolbar. Previously, it was showing “anon” next to the user but instead now it shows our adminuser</p>
+    </section>
 
-  <section id="installing-sonata-admin">
-    <h2>Installing Sonata Admin</h2>
-    <p><a href="https://packagist.org/packages/sonata-project/admin-bundle">Sonata Admin</a> is a CRUD workflow that helps to quickly glue data components to an interface. It features everything you’d expect to form a solid solution and for the lacking features, makes every step extendable / customisable.</p>
-    <p>Just like FOSUser, Sonata can handle different data abstraction layers. Rather than including functionality in the base bundle, Sonata has seperates the data models in to individual bundles. MySQL is a relational DB so we are using the <a href="https://packagist.org/packages/sonata-project/doctrine-orm-admin-bundle">ORM (Object Relational Mapping)</a> version.</p>
+    <section id="installing-sonata-admin" data-magellan-target="installing-sonata-admin">
+      <h2>Installing Sonata Admin</h2>
+      <p><a href="https://packagist.org/packages/sonata-project/admin-bundle">Sonata Admin</a> is a CRUD workflow that helps to quickly glue data components to an interface. It features everything you’d expect to form a solid solution and for the lacking features, makes every step extendable / customisable.</p>
+      <p>Just like FOSUser, Sonata can handle different data abstraction layers. Rather than including functionality in the base bundle, Sonata has seperates the data models in to individual bundles. MySQL is a relational DB so we are using the <a href="https://packagist.org/packages/sonata-project/doctrine-orm-admin-bundle">ORM (Object Relational Mapping)</a> version.</p>
 
-    {{ geshi_highlight('composer require sonata-project/admin-bundle\rcomposer require sonata-project/doctrine-orm-admin-bundle','bash')|raw }}
+      {{ geshi_highlight('composer require sonata-project/admin-bundle\rcomposer require sonata-project/doctrine-orm-admin-bundle','bash')|raw }}
 
-    <p>Sonata Admin pulls in extra dependencies; when choosing to install a bundle, always read the documentation first (which you should anyway). Bundles which have external dependencies may require additional configuration.</p>
+      <p>Sonata Admin pulls in extra dependencies; when choosing to install a bundle, always read the documentation first (which you should anyway). Bundles which have external dependencies may require additional configuration.</p>
 
-    {{ geshi_highlight('// # app/AppKernel.php\r\r// A presentation platform built on Bootstrap\rnew Sonata\CoreBundle\SonataCoreBundle(),\rnew Sonata\BlockBundle\SonataBlockBundle(),\rnew Knp\Bundle\MenuBundle\KnpMenuBundle(),\r// The Sonata Admin functionality\rnew Sonata\AdminBundle\SonataAdminBundle(),\rnew Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),','php')|raw }}
+      {{ geshi_highlight('// # app/AppKernel.php\r\r// A presentation platform built on Bootstrap\rnew Sonata\CoreBundle\SonataCoreBundle(),\rnew Sonata\BlockBundle\SonataBlockBundle(),\rnew Knp\Bundle\MenuBundle\KnpMenuBundle(),\r// The Sonata Admin functionality\rnew Sonata\AdminBundle\SonataAdminBundle(),\rnew Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),','php')|raw }}
 
-    {{ file(page_key,'config.yml')|raw }}
+      {{ file(page_key,'config.yml')|raw }}
 
-    <p>With everything setup to handle admin creation, there is already an interface available: <a href="%http://127.0.0.1/app_dev.php/admin">http://127.0.0.1/app_dev.php/admin</a>
-  </section>
+      <p>With everything setup to handle admin creation, there is already an interface available: <a href="%http://127.0.0.1/app_dev.php/admin">http://127.0.0.1/app_dev.php/admin</a>
+    </section>
 
-  <section if="creating-your-first-service-posts-admin">
-    <h2>Creating your first Service - Post Admin</h2>
-    <p>The Symfony Controller runs on a <a href="http://symfony.com/doc/current/service_container.html">Service Container</a>, this provides an interface for various PHP tasks (plugins, classes, event hooks) to be part of the Symfony pipeline through metadata.</p>
+    <section if="creating-your-first-admin-service" data-magellan-target="creating-your-first-admin-service">
+      <h2>Creating your first Admin Service</h2>
+      <p>The Symfony Controller runs on a <a href="http://symfony.com/doc/current/service_container.html">Service Container</a>, this provides an interface for various PHP tasks (plugins, classes, event hooks) to be part of the Symfony pipeline through metadata.</p>
 
-    {{ file(page_key,'services.yml')|raw }}
+      {{ file(page_key,'services.yml')|raw }}
 
-    <p>We already have our data object so aside from the meta data that presents the admin the new thing here is the PostAdmin namespace. The code here defines the minimal amount of code to setup management of a data object.</p>
-    <p>There are many options available to Sonata Admin and there is some excellent documentation <a href="https://sonataadminbundle.readthedocs.io/en/latest/">available on readthedocs</a>.</p>
+      <p>We already have our data object so aside from the meta data that presents the admin the new thing here is the PostAdmin namespace. The code here defines the minimal amount of code to setup management of a data object.</p>
+      <p>There are many options available to Sonata Admin and there is some excellent documentation <a href="https://sonataadminbundle.readthedocs.io/en/latest/">available on readthedocs</a>.</p>
 
-    {{ file(page_key,'PostAdmin.php')|raw }}
+      {{ file(page_key,'PostAdmin.php')|raw }}
 
-  </section>
+    </section>
 
-  <section id="end">
-    <p>This concludes tutorial 4, in the next one we’ll be adding a comment system to the blog to show how user input and data relationships are handled.</p>
-  </section>
+    <section id="experiment" class="callout success">
+      <p>Things you should try</p>
+      <ul>
+        <li>Explore the FOSUser Objects for their predefined properties and methods{{ geshi_highlight('vendor/friendsofsymfony/user-bundle/Model', 'bash')|raw }}</li>
+        <li>Read the documentation for Sonata Admin <a href="https://sonataadminbundle.readthedocs.io/en/latest/">here</a>. It has a lot to offer and even though it will be covered again, this series of tutorials only scratches the surface</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <div id="magellan" class="medium-4 large-3 columns" data-sticky-container>
+    <nav class="columns sticky" data-sticky data-anchor="content" data-sticky-on="medium">
+      <ul class="menu vertical" data-magellan>
+        <li><a href="#installing-bundles">Installing Bundles</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#routing">Routing</a></li>
+        <li><a href="#creating-users">Creating Users</a></li>
+        <li><a href="#installing-sonata-admin">Installing Sonata Admin</a></li>
+        <li><a href="#creating-your-first-admin-service">Creating you first Admin Service</a></li>
+      </ul>
+
+    </nav>
+  </div>
 
 </div>
 {% endblock %}
