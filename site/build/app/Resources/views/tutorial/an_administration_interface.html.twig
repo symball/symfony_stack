@@ -54,7 +54,7 @@
 
     <p>There are a series of xml files which define routes. We will be using only the security.xml route as the site won’t feature public registration. Don’t be alarmed that the routes are defined in a different format from the annotations we have used so far however; it’s just different. To include extra route definitions in our project, there is a config file dedicated to it.</p>
 
-    {{ geshi_highlight('# app/config/routing.yml\rfos_user:\r  resource: "@FOSUserBundle/Resources/config/routing/security.xml"','script')|raw }}
+    {{ geshi_highlight('# app/config/routing.yml\rfos_user:\r\r  resource: "@FOSUserBundle/Resources/config/routing/security.xml"','bash')|raw }}
   </section>
 
   <section id="creating-users">

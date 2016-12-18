@@ -90,8 +90,11 @@ class FileExtension extends \Twig_Extension
         switch ($file->getExtension()) {
 
           case 'html':
-          case 'twig':
             $type = 'html';
+            break;
+
+          case 'twig':
+            $type = 'twig';
             break;
 
           case 'php':

@@ -1,8 +1,9 @@
 {% extends 'common.html.twig' %}
+{% set page_title = 'Tutorial 1<br />Getting up and Running' %}
 
 {% block body %}
-
 <div class="row medium-8 large-7 columns">
+
   <section id="introduction" class="callout">
     <p>By the end of this tutorial, your device will be serving a Symfony project using Apache. Along the way, we’ll be:</p>
     <ul>
@@ -12,9 +13,10 @@
       <li>Creating a Symfony project and configuring Apache to host it</li>
     </ul>
   </section>
+
   <section id="editing-our-code">
     <h2>Editing our Code</h2>
-    <p>We want to have a powerful way to manage our code because the default environment (Ubuntu) lacks one. For these tutorials, I have chosen Atom because it’s lightweight and incredibly extendable thanks to the plugin interface. More information about Atom can be found on the <a href="https://atom.io">official site</a></p>
+    <p>We want to have a powerful way to manage our code because the default environment (Ubuntu) lacks one. For these tutorials, I have chosen Atom because it’s lightweight and incredibly extendable thanks to the plugin interface. More information about Atom can be found on the <a target="_blank" href="https://atom.io">official site</a></p>
     <p>There is a PPA available (thanks to webupd8team) which allows us to install and manage Atom like any other Linux package so, add that first. PPA stands for Personal Package Archive and they are used to install software (or versions of software) which are not available in the official Ubuntu repositories.</p>
     {{ geshi_highlight('sudo add-apt-repository ppa:webupd8team/atom\rsudo apt-get update\rsudo apt-get install atom', 'bash')|raw }}
   </section>
@@ -23,7 +25,7 @@
     <h2>The Application Stack</h2>
     <p>When complete, we'll be running the project on a full Linux Apache MariaDB PHP (LAMP) stack but database setup will be covered in lesson 2. For now, let’s install our initial application stack:</p>
     {{ geshi_highlight('sudo apt-get install apache2 php php-intl php-mcrypt php-opcache php-xml libapache2-mod-php composer', 'bash')|raw }}
-    <p>You may notice that in this command, as well as installing PHP, we’re also installing some PHP modules. A full list of Symfony requirements can be found on the <a href="http://symfony.com/doc/current/reference/requirements.html">Requirements for Running Symfony</a> page.</p>
+    <p>You may notice that in this command, as well as installing PHP, we’re also installing some PHP modules. A full list of Symfony requirements can be found on the <a target="_blank" href="http://symfony.com/doc/current/reference/requirements.html">Requirements for Running Symfony</a> page.</p>
     <p>For certain functionality, there are a series of polyfills that get downloaded with Symfony and also a requirements checker which we’ll come across later.</p>
     <h3>Configuration</h3>
     <p>With the necessary packages installed, let’s configure PHP. First we enable one of the downloaded PHP extensions which isn’t switched on by default</p>
@@ -42,7 +44,7 @@
 
   <section id="symfony-dedicated-installer">
     <h2>Symfony Dedicated Installer</h2>
-    <p>At this point, we have everything we need to install and run Symfony as it can be installed through Composer but a dedicated Symfony installer is the <a href="https://symfony.com/download">officially recommended option</a>. It makes project creation quicker by configureing some default settings for us and some extra template code that will make things simpler later on.</p>
+    <p>At this point, we have everything we need to install and run Symfony as it can be installed through Composer but a dedicated Symfony installer is the <a target="_blank" href="https://symfony.com/download">officially recommended option</a>. It makes project creation quicker by configureing some default settings for us and some extra template code that will make things simpler later on.</p>
     {{ geshi_highlight('sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony\rsudo chmod a+x /usr/local/bin/symfony\rsymfony','bash')|raw }}
     <p>Running the symfony wrapper without any flags presents you with helpful information illustrating the various ways to create a project. We will be using the default settings which results in the latest release.</p>
     <h3>Creating the Project</h3>
@@ -66,7 +68,16 @@
     {{ geshi_highlight('sudo apachectl restart','bash')|raw }}
     <p>If we visit our browser and reload the page, we’re greeted with an error page. The reason is Symfony <a href="http://symfony.com/doc/current/setup/file_permissions.html">requires the project location to be writable</a> by both the web server and PHP command line user (www-data).</p>
     {{ geshi_highlight('sudo chown -R www-data:www-data /var/www/html\rsudo chmod -R 775 /var/www/html','bash')|raw }}
-    <p>Now, go back to your browser and reload the page, if you are greeted with the Symfony welcome message, congratulations, you have successfully setup Symfony and are ready to move on to the <a href="#">second tutorial</a></p>
+    <p>Now, go back to your browser and reload the page, if you are greeted with the Symfony welcome message, congratulations, you have successfully setup Symfony and are ready to move on.</p>
   </section>
+
+  <section id="experiment" class="callout success">
+    <p>Things you should try:</p>
+    <ul>
+      <li>Create another Symfony project using a different version</li>
+      <li>Explore some of the add-ons available to Atom that can aid productivity. I recommend at least php-twig and minimap</li>
+    </ul>
+  </section>
+
 </div>
 {% endblock %}

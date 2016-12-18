@@ -2,9 +2,6 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
-fos_user:
-  resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-  
 # Include the standard set of admin pages and actions
 admin:
     resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'

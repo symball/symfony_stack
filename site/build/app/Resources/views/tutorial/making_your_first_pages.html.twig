@@ -1,4 +1,5 @@
 {% extends 'common.html.twig' %}
+{% set page_title = 'Tutorial 2<br />Making your first Pages' %}
 
 {% block body %}
 <div class="row medium-8 large-7 columns">
@@ -68,12 +69,11 @@
 
   <section id="the-symfony-controller">
     <h2>The Symfony Controller</h2>
-    <p>Open the following file from your project</p>
+    <p>Before any pages get rendered,Open the following file from your project</p>
 
     {{ file(page_key, 'DefaultController.php')|raw }}
 
-    <p>The first thing you should see is a namespace declaration that follows the file path. There will be a namespace declaration present in every PHP file throughout Symfony for the sake of autoloading according to the <a href="http://www.php-fig.org/psr/psr-4/">PSR4 standard</a>.
-    <div class="callout secondary"><p>If you don’t understand namespaces, they encapsulate code avoiding conflict in the same way you have houses at different addresses contain similar things; each is a private container.</p></div>
+    <p>The first thing you should see is a namespace declaration that follows the file path. There will be a namespace declaration present in every PHP file throughout Symfony for the sake of autoloading according to the <a href="http://www.php-fig.org/psr/psr-4/">PSR4 standard</a>. If you don’t understand namespaces, they encapsulate code avoiding conflict in the same way you have houses at different addresses contain similar things; each is a private container.</p>
     <p>Using namespaces to pull in functionality from other locations in Symfony, there are three use statements. These are the features from some of the bundles Standard Edition configure for us. We’ll cover bundles in greater depth later on but for now, know that a bundle is simply the term used to describe a collection of code that conforms to Symfony standards.</p>
     <ul>
       <li>Route allows us to define navigation.</li>

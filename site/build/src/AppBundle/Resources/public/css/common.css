@@ -1,8 +1,25 @@
-body {
-  font-family: 'Roboto', sans-serif !important;
-  font-weight: 400;
-  line-height: 1.5em;
-}
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto', sans-serif !important;
-}
+header {
+  padding-bottom: 2rem; }
+
+.is-dropdown-submenu .seperator {
+  background-color: #e6e6e6;
+  color: #0a0a0a;
+  padding: 0 1rem; }
+
+.top-bar-title {
+  float: right !important; }
+
+.top-bar a,
+.is-dropdown-submenu > li {
+  color: #fff; }
+
+footer {
+  margin-top: 2rem;
+  background-color: #0a0a0a;
+  padding: 2rem 4rem;
+  text-align: center;
+  color: #fff; }
+
+/* Remove the list effect from footer navigation */
+footer li {
+  list-style: none; }

@@ -20,11 +20,16 @@ gulp.task('default', ['scss']);
 gulp.task('scss', function() {
   /* Compile SCSS from Foundation*/
   console.log(SOURCE_PATH+'foundation/app.scss');
-  gulp.src(SOURCE_PATH+'foundation/app.scss')
+  gulp.src([
+    SOURCE_PATH+'foundation/app.scss',
+    SOURCE_PATH+'foundation/common.scss'
+  ])
   .pipe(sass({
-   includePaths: ['node_modules/foundation-sites/scss', SOURCE_PATH+'foundation/foundation_settings.scss']
+   includePaths: [SOURCE_PATH+'foundation/foundation_settings.scss', 'node_modules/foundation-sites/scss'],
+   errLogToConsole: true
   }))
-  .pipe(rename("foundation.css"))
+  .pipe(rename("common.css"))
   .pipe(gulp.dest(BUILD_PATH+'css/'))
   .pipe(notify('Foundation SASS complete'));
+
 });

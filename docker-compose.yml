@@ -10,7 +10,7 @@ services:
     links:
       - mongo
     volumes:
-      - ./site/build:/var/www/html
+      - ./site:/var/www/html
 
   nginx:
     build: docker/nginx

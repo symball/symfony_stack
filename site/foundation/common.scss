@@ -1,0 +1,29 @@
+@import 'foundation_settings';
+
+header {
+  padding-bottom: 2rem;
+}
+.is-dropdown-submenu .seperator {
+  background-color: $light-gray;
+  color: $black;
+  padding: 0 1rem;
+}
+.top-bar-title {
+  float: right !important;
+}
+.top-bar a,
+.is-dropdown-submenu > li {
+  color: #fff;
+}
+
+footer {
+  margin-top: 2rem;
+  background-color: $black;
+  padding: 2rem 4rem;
+  text-align: center;
+  color: #fff;
+}
+/* Remove the list effect from footer navigation */
+footer li {
+  list-style: none;
+}
