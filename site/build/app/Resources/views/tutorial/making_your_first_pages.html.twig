@@ -2,229 +2,245 @@
 {% set page_title = 'Tutorial 2<br />Making your first Pages' %}
 
 {% block body %}
-<div class="row medium-8 large-7 columns">
+<div class="row">
+  <div id="content" class="medium-8 large-9 columns">
 
-  <section id="introduction" class="callout">
-    <p>By the end of this lesson, you’ll have a nice looking portfolio page with the makings of a blog index you created. Along the way, we’ll be:</p>
-    <ul>
-      <li>Discussing Symfony Project layout</li>
-      <li>Understand navigation with the Symfony controller</li>
-      <li>Creating pages with the Twig templating language</li>
-      <li>Learning how to use the different Symfony environments</li>
-      <li>Creating a full template for our frontend</li>
-    </ul>
-  </section>
+    <section id="introduction" class="callout">
+      <p>By the end of this lesson, you’ll have a nice looking portfolio page with the makings of a blog index you created. Along the way, we’ll be:</p>
+      <ul>
+        <li>Discussing Symfony Project layout</li>
+        <li>Understand navigation with the Symfony controller</li>
+        <li>Creating pages with the Twig templating language</li>
+        <li>Learning how to use the different Symfony environments</li>
+        <li>Creating a full template for our frontend</li>
+      </ul>
+    </section>
 
-  <section id="project-layout">
-    <h2>Project Layout</h2>
-    <p>To get started, open up Atom and from the file drop down menu, click add project and use our web root as the destination. Taking a look at the file layout</p>
+    <section id="project-layout" data-magellan-target="project-layout">
+      <h2>Project Layout</h2>
+      <p>To get started, open up Atom and from the file drop down menu, click add project and use our web root as the destination. Taking a look at the file layout</p>
 
-    <table>
-      <tr>
-        <td>app</td>
-        <td>Configuration, templating, translations</td>
-      </tr>
-      <tr>
-        <td>bin</td>
-        <td>Some ready made binary utilities</td>
-      </tr>
-      <tr>
-        <td>src</td>
-        <td>Where we place any PHP code we create</td>
-      </tr>
-      <tr>
-        <td>tests</td>
-        <td>PHPUnit automatic testing schema</td>
-      </tr>
-      <tr>
-        <td>var</td>
-        <td>Auto generated code</td>
-      </tr>
-      <tr>
-        <td>vendor</td>
-        <td>Where any third party code downloaded by composer goes, including Symfony itself</td>
-      </tr>
-      <tr>
-        <td>web</td>
-        <td>The publicly accessable root of the project</td>
-      </tr>
-      <tr>
-        <td>composer.json</td>
-        <td>Schema for third party dependencies</td>
-      </tr>
-      <tr>
-        <td>composer.lock</td>
-        <td>The “current version” schema for use when running composer install</td>
-      </tr>
-      <tr>
-        <td>phpunit.xml.dist</td>
-        <td>A base configuration file to run with PHPUnit</td>
-      </tr>
-      <tr>
-        <td>README.md</td>
-        <td>A markdown file used to describe the project</td>
-      </tr>
-    </table>
-  </section>
+      <table>
+        <tr>
+          <td>app</td>
+          <td>Configuration, templating, translations</td>
+        </tr>
+        <tr>
+          <td>bin</td>
+          <td>Some ready made binary utilities</td>
+        </tr>
+        <tr>
+          <td>src</td>
+          <td>Where we place any PHP code we create</td>
+        </tr>
+        <tr>
+          <td>tests</td>
+          <td>PHPUnit automatic testing schema</td>
+        </tr>
+        <tr>
+          <td>var</td>
+          <td>Auto generated code</td>
+        </tr>
+        <tr>
+          <td>vendor</td>
+          <td>Where any third party code downloaded by composer goes, including Symfony itself</td>
+        </tr>
+        <tr>
+          <td>web</td>
+          <td>The publicly accessable root of the project</td>
+        </tr>
+        <tr>
+          <td>composer.json</td>
+          <td>Schema for third party dependencies</td>
+        </tr>
+        <tr>
+          <td>composer.lock</td>
+          <td>The “current version” schema for use when running composer install</td>
+        </tr>
+        <tr>
+          <td>phpunit.xml.dist</td>
+          <td>A base configuration file to run with PHPUnit</td>
+        </tr>
+        <tr>
+          <td>README.md</td>
+          <td>A markdown file used to describe the project</td>
+        </tr>
+      </table>
+    </section>
 
-  <section id="the-symfony-controller">
-    <h2>The Symfony Controller</h2>
-    <p>Before any pages get rendered,Open the following file from your project</p>
+    <section id="the-symfony-controller" data-magellan-target="the-symfony-controller">
+      <h2>The Symfony Controller</h2>
+      <p>Before any pages get rendered, Symfony needs to handle the request. Open the following file from your project</p>
 
-    {{ file(page_key, 'DefaultController.php')|raw }}
+      {{ file(page_key, 'DefaultController.php')|raw }}
 
-    <p>The first thing you should see is a namespace declaration that follows the file path. There will be a namespace declaration present in every PHP file throughout Symfony for the sake of autoloading according to the <a href="http://www.php-fig.org/psr/psr-4/">PSR4 standard</a>. If you don’t understand namespaces, they encapsulate code avoiding conflict in the same way you have houses at different addresses contain similar things; each is a private container.</p>
-    <p>Using namespaces to pull in functionality from other locations in Symfony, there are three use statements. These are the features from some of the bundles Standard Edition configure for us. We’ll cover bundles in greater depth later on but for now, know that a bundle is simply the term used to describe a collection of code that conforms to Symfony standards.</p>
-    <ul>
-      <li>Route allows us to define navigation.</li>
-      <li>Controller provides the request / reponse logic</li>
-      <li>Request creates a bag of information about the HTTP request</li>
-    </ul>
-    <p>There are three other things to take note of (and not forget) in this file</p>
-    <ol>
-      <li>The <a href="http://symfony.com/doc/current/contributing/code/standards.html">coding conventions</a> used to name classes and methods. Symfony is not just a framework, it is a philosophy and community so there is a mindset to follow that. If you intend to distribute your code, you need to conform to a set of standards. When getting started, copy existing boilerplate code and then modify until familliar</li>
-      <li>Above our method name, there is a comment with an @Route annotation within it. Symfony builds and caches the code we create; annotations provide us with a way to bolt on extras with the goal of keeping code clean. The Route annotation provides a flexible and simple way to define navigation. Other examples can include validation and even database schemas.</li>
-      <li>The return render line. When using a Symfony controller, every action must return a response object.</li>
-    </ol>
-  </section>
+      <p>The first thing you should see is a namespace declaration that follows the file path. There will be a namespace declaration present in every PHP file throughout Symfony for the sake of autoloading according to the <a target="_blank" href="http://www.php-fig.org/psr/psr-4/">PSR4 standard</a>. If you don’t understand namespaces, they encapsulate code avoiding conflict in the same way you have houses at different addresses contain similar things; each is a private container.</p>
+      <p>Using namespaces to pull in functionality from other locations in Symfony, there are three use statements. These are the features from some of the bundles Standard Edition configure for us. We’ll cover bundles in greater depth later on but for now, know that a bundle is simply the term used to describe a collection of code that conforms to Symfony standards.</p>
+      <ul>
+        <li>Route allows us to define navigation.</li>
+        <li>Controller provides the request / reponse logic</li>
+        <li>Request creates a bag of information about the HTTP request</li>
+      </ul>
+      <p>There are three other things to take note of (and not forget) in this file</p>
+      <ol>
+        <li>The <a target="_blank" href="http://symfony.com/doc/current/contributing/code/standards.html">coding conventions</a> used to name classes and methods. Symfony is not just a framework, it is a philosophy and community so there is a mindset to follow that. If you intend to distribute your code, you need to conform to a set of standards. When getting started, copy existing boilerplate code and then modify until familliar</li>
+        <li>Above our method name, there is a comment with an @Route annotation within it. Symfony builds and caches the code we create; annotations provide us with a way to bolt on extras with the goal of keeping code clean. The Route annotation provides a flexible and simple way to define navigation. Other examples can include validation and even database schemas.</li>
+        <li>The return render line. When using a Symfony controller, every action must return a response object.</li>
+      </ol>
+    </section>
 
-  <section id="templates">
-    <h2>Templates</h2>
-    <p>The Default controller returns a rendered template which has been passed the path of your Symfony project using base_dir as a variable. The default template engine is <a href="http://twig.sensiolabs.org/">Twig, also created by SensioLabs</a> like the core of Smyfony itself.</p>
-    <p>If you take a look at the documentation, you can see the syntax is very short and simple. This keep it simple approach was a design decision made on purpose.</p>
-    <p>Open up the following two files</p>
+    <section id="templates" data-magellan-target="templates">
+      <h2>Templates</h2>
+      <p>The Default controller returns a rendered template which has been passed the path of your Symfony project using base_dir as a variable. The default template engine is <a target="_blank" href="http://twig.sensiolabs.org/">Twig, also created by SensioLabs</a> like the core of Smyfony itself.</p>
+      <p>If you take a look at the documentation, you can see the syntax is very short and simple. This keep it simple approach was a design decision made on purpose.</p>
+      <p>Open up the following two files</p>
 
-    {{ files(page_key,
-    {'index.html.twig':'defaultindex.html.twig',
-     'base.html.twig':'defaultbase.html.twig'})|raw }}
+      {{ files(page_key,
+      {'index.html.twig':'defaultindex.html.twig',
+       'base.html.twig':'defaultbase.html.twig'})|raw }}
 
-    <p>Looking at the templates</p>
-    <ul>
-      <li>The page is constructed from a root template (base) using regular HTML which can be extended in the same way that PHP classes can inherit parent object proprties.{{ geshi_highlight('{% extends ... %}')|raw }}</li>
-      <li>There are block declarations which allow for easy overriding of content in child templates.{{ geshi_highlight('{% block ... %}{% endblock %}')|raw }}</li>
-    </ul>
-    <p>Change something in this file and reload the page. Nothing changed because Symfony is using the production cache and frontend views are no exception. In order to have the changes reflected, we need to clear the cache.</p>
-    {{ geshi_highlight('php bin/console cache:clear --env=prod','bash')|raw }}
-    <p>Reload the page and you should see your changes. This is impractical for development though. In Symfony, we can run the website using various environments, you may notice in the above that we cleared the production using the env parameter.</p>
-  </section>
+      <p>Looking at the templates</p>
+      <ul>
+        <li>The page is constructed from a root template (base) using regular HTML which can be extended in the same way that PHP classes can inherit parent object proprties.{{ geshi_highlight('{% extends ... %}')|raw }}</li>
+        <li>There are block declarations which allow for easy overriding of content in child templates.{{ geshi_highlight('{% block ... %}{% endblock %}')|raw }}</li>
+      </ul>
+      <p>Change something in this file and reload the page. Nothing changed because Symfony is using the production cache and frontend views are no exception. In order to have the changes reflected, we need to clear the cache.</p>
+      {{ geshi_highlight('php bin/console cache:clear --env=prod','bash')|raw }}
+      <p>Reload the page and you should see your changes. This is impractical for development though. In Symfony, we can run the website using various environments, you may notice in the above that we cleared the production using the env parameter.</p>
+    </section>
 
-  <section id="environments">
-    <h2>Environments</h2>
-    <p>To Symfony, an environment is really nothing more than a key which gets set early in the pipeline. In reality, this key is used to provide different code paths and the Standard Edition prepares three environments for us right from the get go.</p>
-    <table>
-      <tr>
-        <td>Production</td>
-        <td>The optimised pipeline</td>
-      </tr>
-      <tr>
-        <td>Development</td>
-        <td>Caches are regenerated every request, debugging enabled</td>
-      </tr>
-      <tr>
-        <td>Testing</td>
-        <td>Used for PHPUnit testing</td>
-      </tr>
-    </table>
-    <p>Smyfony Standard Edition prepares two directory indexes for you to use. You may recall in the first tutorial, we set the Apache DirectoryIndex to app.php. Open the following files</p>
-    {{ geshi_highlight('# web/app.php\r# web/app_dev.php','bash')|raw }}
-    <p>For now, don't concern yourself with the specifics of each file, just take note that when the kernel is created there is a different first parameter used in each file.</p>
-    {{ geshi_highlight('$kernel = new AppKernel(‘dev’, true);','php')|raw}}
-    <p>Go back to your browser and visit 127.0.0.1/app_dev.php. You should be viewing a very similar page to the original except there is a toolbar located along the bottom of the page providing extra information. Symfony has very powerful debugging tools built right in to the framework itself.</p>
-    <p>Make a change to your template, save and reload. The changes are instantaneous with no need to clear any caches. Try taking the app_dev.php part out of the URL and reload the page, your changes have no effect yet as they are still using the cache.
-  </section>
+    <section id="environments" data-magellan-target="environments">
+      <h2>Environments</h2>
+      <p>To Symfony, an environment is really nothing more than a key which gets set early in the pipeline. In reality, this key is used to provide different code paths and the Standard Edition prepares three environments for us right from the get go.</p>
+      <table>
+        <tr>
+          <td>Production</td>
+          <td>The optimised pipeline</td>
+        </tr>
+        <tr>
+          <td>Development</td>
+          <td>Caches are regenerated every request, debugging enabled</td>
+        </tr>
+        <tr>
+          <td>Testing</td>
+          <td>Used for PHPUnit testing</td>
+        </tr>
+      </table>
+      <p>Smyfony Standard Edition prepares two directory indexes for you to use. You may recall in the first tutorial, we set the Apache DirectoryIndex to app.php. Open the following files</p>
+      {{ geshi_highlight('# web/app.php\r# web/app_dev.php','bash')|raw }}
+      <p>For now, don't concern yourself with the specifics of each file, just take note that when the kernel is created there is a different first parameter used in each file.</p>
+      {{ geshi_highlight('$kernel = new AppKernel(‘dev’, true);','php')|raw}}
+      <p>Go back to your browser and visit 127.0.0.1/app_dev.php. You should be viewing a very similar page to the original except there is a toolbar located along the bottom of the page providing extra information. Symfony has very powerful debugging tools built right in to the framework itself.</p>
+      <p>Make a change to your template, save and reload. The changes are instantaneous with no need to clear any caches. Try taking the app_dev.php part out of the URL and reload the page, your changes have no effect yet as they are still using the cache.
+    </section>
 
-  <section id="creating-our-frontend">
-    <h2>Creating our frontend</h2>
-    <p>The project we're building is that of a digital agent and to quickstart things, we’ll use a premade template. Go and grab the template from <a href="https://startbootstrap.com/template-overviews/freelancer/">here</a></p>
-    <p>Upon downloading (or cloning) the template, we want to make parts of it public. Symfony does provide facilities to manage web assets including features for combining and minifying web assets which will be covered in the optimisation tutorial but for now, we’ll copy the appropriate assets to the web root.</p>
-    <p>Copy the following folders from the downloaded template to the web directory</p>
-    {{ geshi_highlight('css\rimg\rjs\rvendor','bash')|raw }}
-    <p>With that done, we want to change the template. Open the index.html from the download and copy the contents in to your base.html.twig template and add a slash at the start of each address for the web assets.</p>
+    <section id="creating-our-frontend" data-magellan-target="creating-our-frontend">
+      <h2>Creating our frontend</h2>
+      <p>The project we're building is that of a digital agent and to quickstart things, we’ll use a premade template. Go and grab the template from <a target="_blank" href="https://startbootstrap.com/template-overviews/freelancer/">here</a></p>
+      <p>Upon downloading (or cloning) the template, we want to make parts of it public. Symfony does provide facilities to manage web assets including features for combining and minifying web assets which will be covered in the optimisation tutorial but for now, we’ll copy the appropriate assets to the web root.</p>
+      <p>Copy the following folders from the downloaded template to the web directory</p>
+      {{ geshi_highlight('css\rimg\rjs\rvendor','bash')|raw }}
+      <p>With that done, we want to change the template. Open the index.html from the download and copy the contents in to your base.html.twig template and add a slash at the start of each address for the web assets.</p>
 
-    <p>Reload 127.0.0.1/app_dev.php and your site will now reflect a Freelancer portfolio. Before creating a second page, we’re going to make the frontend code more managable and the Twig "extends" declaration makes this very simple.When done, there will be three parts to your Symfony template</p>
-    <table>
-      <tr>
-        <td>base.html.twig</td>
-        <td>The root of the template featuring HTML that will be present on every page; the template skeleton. The benefit of laying out the template in this fashion is that it provides a quick to view high level representation of the site layout without needing to concern yourself with the details.</td>
-      </tr>
-      <tr>
-        <td>common.html.twig</td>
-        <td>Some default content to be used in block positions. Having the common elements in a clearly defined template makes it very quick to change common elements and reduces the chance of breaking the overall layout.</td>
-      </tr>
-      <tr>
-        <td>index.html.twig</td>
-        <td>Represents content unique to the page</td>
-      </tr>
-    </table>
-    <p>The base template is precisely that, basic. The blocks we declare will be very generic. If you were to cut up the template in to managable sections, without going too deep, we will define:</p>
-    <ul>
-      <li>Navigation so that visitors can...navigate the site</li>
-      <li>A header area to include striking content</li>
-      <li>The body area which will contain page specific content</li>
-      <li>A common footer area with sitemap / contact form</li>
-    </ul>
+      <p>Reload 127.0.0.1/app_dev.php and your site will now reflect a Freelancer portfolio. Before creating a second page, we’re going to make the frontend code more managable and the Twig "extends" declaration makes this very simple.When done, there will be three parts to your Symfony template</p>
+      <table>
+        <tr>
+          <td>base.html.twig</td>
+          <td>The root of the template featuring HTML that will be present on every page; the template skeleton. The benefit of laying out the template in this fashion is that it provides a quick to view high level representation of the site layout without needing to concern yourself with the details.</td>
+        </tr>
+        <tr>
+          <td>common.html.twig</td>
+          <td>Some default content to be used in block positions. Having the common elements in a clearly defined template makes it very quick to change common elements and reduces the chance of breaking the overall layout.</td>
+        </tr>
+        <tr>
+          <td>index.html.twig</td>
+          <td>Represents content unique to the page</td>
+        </tr>
+      </table>
+      <p>The base template is precisely that, basic. The blocks we declare will be very generic. If you were to cut up the template in to managable sections, without going too deep, we will define:</p>
+      <ul>
+        <li>Navigation so that visitors can...navigate the site</li>
+        <li>A header area to include striking content</li>
+        <li>The body area which will contain page specific content</li>
+        <li>A common footer area with sitemap / contact form</li>
+      </ul>
 
-    {{ files(page_key,{
-    'base.html.twig':'base.html.twig',
-    'common.html.twig':'common.html.twig',
-    'index.html.twig':'homeindex.html.twig'})|raw }}
+      {{ files(page_key,{
+      'base.html.twig':'base.html.twig',
+      'common.html.twig':'common.html.twig',
+      'index.html.twig':'homeindex.html.twig'})|raw }}
 
-    <p>With the skeleton in place, copy the HTML that was originally in place of our blocks to the common template</p>
+      <p>With the skeleton in place, copy the HTML that was originally in place of our blocks to the common template</p>
 
-    <p>At this point, you have a template which allows for quick creation of new pages with only the need to extend the common template and define the body template. Let's finish it by creating the home page template. Please note that in the demo code below, I cut down the number of modals from 6 to 1 (replacing the links along the way) to keep the code shorter.</p>
+      <p>At this point, you have a template which allows for quick creation of new pages with only the need to extend the common template and define the body template. Let's finish it by creating the home page template. Please note that in the demo code below, I cut down the number of modals from 6 to 1 (replacing the links along the way) to keep the code shorter.</p>
 
-    <p>Reload the web page to check that everything has worked, it should look the same.</p>
-  </section>
+      <p>Reload the web page to check that everything has worked, it should look the same.</p>
+    </section>
 
-<section id="creating-a-second-page">
-  <h2>Creating a second page</h2>
-  <h3>The Controller</h3>
-  <p>The template work you performed in the last step was all about preperation and you will see that payoff now. You're going to be adding a blog section to the website.</p>
-  <p>We'll begin by creating a route to make the page we're about to create reachable. It is possible to add the route to the default controller but, because the blog will be a distinct part of the site, we should reflect that. The simplest way to do this is to open the Default controller and save it under a different name and then making the following three changes:</p>
-  <ul>
-    <li>The class name becomes BlogController</li>
-    <li>The @Route annotation defines the new blog route</li>
-    <li>The template returned to cover the new template</li>
-  </ul>
+    <section id="creating-a-second-page" data-magellan-target="creating-a-second-page">
+      <h2>Creating a second page</h2>
+      <h3>The Controller</h3>
+      <p>The template work you performed in the last step was all about preperation and you will see that payoff now. You're going to be adding a blog section to the website.</p>
+      <p>We'll begin by creating a route to make the page we're about to create reachable. It is possible to add the route to the default controller but, because the blog will be a distinct part of the site, we should reflect that. The simplest way to do this is to open the Default controller and save it under a different name and then making the following three changes:</p>
+      <ul>
+        <li>The class name becomes BlogController</li>
+        <li>The @Route annotation defines the new blog route</li>
+        <li>The template returned to cover the new template</li>
+      </ul>
 
-  {{ file(page_key,'BlogController.php')|raw }}
+      {{ file(page_key,'BlogController.php')|raw }}
 
-  <h2>The Template</h2>
-  <p>Save the index.html.twig file under a different name. Because organisation of code is very important, rather than save it in the same place as the default view, let’s create another folder in views called blog and save it there.</p>
-  <p>I will leave the name as index because it is going to act as the directory index for the blog part of our website and by being named index, we’ll be able to recognise it very quickly.To speed up development again, I’ll take some boilerplate code readymade for us:</p>
-  <a href="https://startbootstrap.com/template-overviews/blog-home/">Bootstrap Template</a>
-  <p>Let’s view the source of the HTML file and simply copy the relevant code for a blog post in to our body for the moment. After saving the file, visit the page we just created:</p>
+      <h2>The Template</h2>
+      <p>Save the index.html.twig file under a different name. Because organisation of code is very important, rather than save it in the same place as the default view, let’s create another folder in views called blog and save it there.</p>
+      <p>I will leave the name as index because it is going to act as the directory index for the blog part of our website and by being named index, we’ll be able to recognise it very quickly.To speed up development again, I’ll take some boilerplate code readymade for us:</p>
+      <a target="_blank" href="https://startbootstrap.com/template-overviews/blog-home/">Bootstrap Template</a>
+      <p>Let’s view the source of the HTML file and simply copy the relevant code for a blog post in to our body for the moment. After saving the file, visit the page we just created:</p>
 
-  {{ geshi_highlight('127.0.0.1/app_dev.php/blog','bash')|raw }}
+      {{ geshi_highlight('127.0.0.1/app_dev.php/blog','bash')|raw }}
 
-  <p>You should now see a new page but, we still have a large header across the page; this is due to the way we have defined our template structure. In common, there is a block called header. Let’s copy that block in to our blog index page and make a few minor modifications.</p>
-  <p>Now we have our blog index page, we need some way to reach it from the frontend. Look at the route annotation within the blog controller we created.</p>
+      <p>You should now see a new page but, we still have a large header across the page; this is due to the way we have defined our template structure. In common, there is a block called header. Let’s copy that block in to our blog index page and make a few minor modifications.</p>
+      <p>Now we have our blog index page, we need some way to reach it from the frontend. Look at the route annotation within the blog controller we created.</p>
 
-  {{ geshi_highlight('@Route("/blog", name="blog_index")','php')|raw }}
+      {{ geshi_highlight('@Route("/blog", name="blog_index")','php')|raw }}
 
-  <p>Our new page has the name blogindex; this is our route name which allows us to reference the URL without needing to know the actual URL. To use this URL, let’s open common.html.twig and add an entry to the navigation section.</p>
+      <p>Our new page has the name blogindex; this is our route name which allows us to reference the URL without needing to know the actual URL. To use this URL, let’s open common.html.twig and add an entry to the navigation section.</p>
 
-  {{geshi_highlight('<li class="page-scroll"><a href="{{ path(\'blog_index\') }}">Blog</a></li>', 'html')|raw }}
+      {{geshi_highlight('<li class="page-scroll"><a target="_blank" href="{{ path(\'blog_index\') }}">Blog</a></li>', 'html')|raw }}
 
-  <p>path is a twig function that will print the path for the route name that gets passed in as the first parameter and parameters as the second parameter as a JSON object. We’ll be using parameters in a later tutorial.</p>
+      <p>path is a twig function that will print the path for the route name that gets passed in as the first parameter and parameters as the second parameter as a JSON object. We’ll be using parameters in a later tutorial.</p>
+      <p>So far in twig, we’ve used the { % (tag) syntax whereas now we are using { { (function) syntax. Some of the Twig functionality is interchangable but best practise states:</p>
+      <ul>
+        {% verbatim %}
+        <li>{{ }} is used to print the result of an expression evaluation</li>
+        <li>{% %} is used to execute statements</li>
+        {% endverbatim %}
+      </ul>
 
-  </section>
+    </section>
 
-  <section id="end-notes" class="callout">
-    <h3>Notes</h3>
-    <p>So far in twig, we’ve used the { % (tag) syntax whereas now we are using { { (function) syntax. Some of the Twig functionality is interchangable but best practise states:</p>
-    <ul>
-      {% verbatim %}
-      <li>{{ }} is used to print the result of an expression evaluation</li>
-      <li>{% %} is used to execute statements</li>
-      {% endverbatim %}
-    </ul>
-    <h3>Experiment</h3>
-    <ul>
-      <li>ry changing the URL we declared in our BlogController and see how the URL gets updated automatically for us. If you are already on the blog page when making this change, Symfony should throw an error as the route no longer exists</li>
-      <li>Get a list of all routes that Symfony recognises</li>
-    </ul>
-    {{ geshi_highlight('php bin/console debug:router', 'bash')|raw }}
-  </section>
+    <section id="experiment" class="callout success">
+      <p>Things you should try</p>
+      <ul>
+        <li>Change the URL path in the BlogController and see how the URL gets automatically updated. If you are already on the blog page when making this change, Symfony should throw an error as the route no longer exists</li>
+        <li>Get a list of existing routes within Symfony using the Command line {{ geshi_highlight('php bin/console debug:router', 'bash')|raw }}</li>
+      </ul>
+
+    </section>
+  </div>
+
+  <div id="magellan" class="medium-4 large-3 columns" data-sticky-container>
+    <nav class="columns sticky" data-sticky data-anchor="content" data-sticky-on="medium">
+
+      <ul class="menu vertical" data-magellan>
+        <li><a href="#project-layout">Project Layout</a></li>
+        <li><a href="#the-symfony-controller">The Symfony Controller</a></li>
+        <li><a href="#templates">Templates</a></li>
+        <li><a href="#environments">Environments</a></li>
+        <li><a href="#creating-our-frontend">Creating our Frontend</a></li>
+        <li><a href="#creating-a-second-page">Creating a Second Page</a></li>
+      </ul>
+
+    </nav>
+  </div>
 </div>
 {% endblock %}

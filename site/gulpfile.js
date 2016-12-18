@@ -13,11 +13,11 @@ var merge = require('merge-stream');
 var SOURCE_PATH = '';
 var BUILD_PATH = 'build/src/AppBundle/Resources/public/';
 
-gulp.task('default', ['scss']);
+gulp.task('default', ['foundation']);
 /**
  * SCSS - Compile Foundation from SCSS
  */
-gulp.task('scss', function() {
+gulp.task('foundation', function() {
   /* Compile SCSS from Foundation*/
   console.log(SOURCE_PATH+'foundation/app.scss');
   gulp.src([
@@ -32,4 +32,6 @@ gulp.task('scss', function() {
   .pipe(gulp.dest(BUILD_PATH+'css/'))
   .pipe(notify('Foundation SASS complete'));
 
+  gulp.src(SOURCE_PATH+'node_modules/foundation-sites/dist/js/foundation.min.js')
+  .pipe(gulp.dest(BUILD_PATH+'js/'))
 });

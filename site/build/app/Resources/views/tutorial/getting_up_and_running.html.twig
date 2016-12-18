@@ -2,7 +2,9 @@
 {% set page_title = 'Tutorial 1<br />Getting up and Running' %}
 
 {% block body %}
-<div class="row medium-8 large-7 columns">
+
+<div class="row">
+  <div id="content" class="medium-8 large-9 columns">
 
   <section id="introduction" class="callout">
     <p>By the end of this tutorial, your device will be serving a Symfony project using Apache. Along the way, we’ll be:</p>
@@ -14,14 +16,14 @@
     </ul>
   </section>
 
-  <section id="editing-our-code">
+  <section id="editing-our-code" data-magellan-target="editing-our-code">
     <h2>Editing our Code</h2>
     <p>We want to have a powerful way to manage our code because the default environment (Ubuntu) lacks one. For these tutorials, I have chosen Atom because it’s lightweight and incredibly extendable thanks to the plugin interface. More information about Atom can be found on the <a target="_blank" href="https://atom.io">official site</a></p>
     <p>There is a PPA available (thanks to webupd8team) which allows us to install and manage Atom like any other Linux package so, add that first. PPA stands for Personal Package Archive and they are used to install software (or versions of software) which are not available in the official Ubuntu repositories.</p>
     {{ geshi_highlight('sudo add-apt-repository ppa:webupd8team/atom\rsudo apt-get update\rsudo apt-get install atom', 'bash')|raw }}
   </section>
 
-  <section id="the-application-stack">
+  <section id="the-application-stack" data-magellan-target="the-application-stack">
     <h2>The Application Stack</h2>
     <p>When complete, we'll be running the project on a full Linux Apache MariaDB PHP (LAMP) stack but database setup will be covered in lesson 2. For now, let’s install our initial application stack:</p>
     {{ geshi_highlight('sudo apt-get install apache2 php php-intl php-mcrypt php-opcache php-xml libapache2-mod-php composer', 'bash')|raw }}
@@ -34,7 +36,7 @@
     {{ geshi_highlight('# /etc/php/7.0/cli/php.ini\r# /etc/php/7.0/apache2/php.ini\r\r;http://php.net/manual/en/timezones.php\rdate.timezone = Asia/Hong_Kong','ini')|raw }}
   </section>
 
-  <section>User Permissions</section>
+  <section id="user-permissions" data-magellan-target="user-permissions">User Permissions</section>
     <h2>User Permissions</h2>
     <p>With the system packages installed, we’ll next want to make sure our user has permissions to edit the files within the web space later on. Apache runs as www-data so, the simplest solution will be to add our user to the www-data group.</p>
     {{ geshi_highlight('sudo usermod -aG www-data user_name','bash')|raw}}
@@ -42,7 +44,7 @@
     {{ geshi_highlight('id', 'bash')|raw }}
   </section>
 
-  <section id="symfony-dedicated-installer">
+  <section id="dedicated-installer" data-magellan-target="dedicated-installer">
     <h2>Symfony Dedicated Installer</h2>
     <p>At this point, we have everything we need to install and run Symfony as it can be installed through Composer but a dedicated Symfony installer is the <a target="_blank" href="https://symfony.com/download">officially recommended option</a>. It makes project creation quicker by configureing some default settings for us and some extra template code that will make things simpler later on.</p>
     {{ geshi_highlight('sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony\rsudo chmod a+x /usr/local/bin/symfony\rsymfony','bash')|raw }}
@@ -52,7 +54,7 @@
     {{ geshi_highlight('symfony new mytestproject\rcd mytestproject','bash')|raw }}
   </section>
 
-  <section id="running-the-project">
+  <section id="running-the-project" data-magellan-target="running-the-project">
     <h2>Running the project</h2>
     <p>Let’s check whether everything installed correctly using the requirements checker supplied with Symfony</p>
     {{ geshi_highlight('php bin/symfony_requirements','bash')|raw}}
@@ -79,5 +81,19 @@
     </ul>
   </section>
 
+</div>
+
+<div id="magellan" class="medium-4 large-3 columns" data-sticky-container>
+  <nav class="columns sticky" data-sticky data-anchor="content" data-sticky-on="medium">
+
+    <ul class="menu vertical" data-magellan>
+      <li><a href="#editing-our-code">Editing our Code</a></li>
+      <li><a href="#the-application-stack">The Application Stack</a></li>
+      <li><a href="#user-permissions">User Permissions</a></li>
+      <li><a href="#dedicated-installer">Dedicated Installer</a></li>
+      <li><a href="#running-the-project">Running the Project</a></li>
+    </ul>
+
+  </nav>
 </div>
 {% endblock %}

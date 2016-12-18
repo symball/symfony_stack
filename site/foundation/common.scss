@@ -8,9 +8,7 @@ header {
   color: $black;
   padding: 0 1rem;
 }
-.top-bar-title {
-  float: right !important;
-}
+
 .top-bar a,
 .is-dropdown-submenu > li {
   color: #fff;
@@ -26,4 +24,13 @@ footer {
 /* Remove the list effect from footer navigation */
 footer li {
   list-style: none;
+}
+
+#magellan .is-stuck {
+  padding-top: 3rem;
+}
+
+a.active {
+  background-color: $primary-color;
+  color: $white;
 }
